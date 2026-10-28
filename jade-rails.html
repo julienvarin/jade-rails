@@ -77,6 +77,8 @@ button:disabled{opacity:.45;cursor:default}
 .ticket .mm{width:58px;height:47px;border-radius:5px;flex:none;border:1px solid #0000001a}
 .ticket .tt{flex:1;line-height:1.25}
 .ticket.big .mm{width:96px;height:78px}
+.ticket.long{background:linear-gradient(135deg,#fff4dc,#fde7b8);border-color:#e0a63a}
+.ltag{display:block;font-size:9px;font-weight:800;letter-spacing:.1em;color:#b45309;margin-bottom:1px}
 .ticket.done{background:#e7f6ef;border-color:#9bd5b9}
 .ticket.big{font-size:14px;padding:10px 12px;cursor:pointer;display:flex;justify-content:space-between;margin-bottom:8px;opacity:.55}
 .ticket.big.sel{opacity:1;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
@@ -205,14 +207,16 @@ function shortest(a,b,w){const d={},prev={},done=new Set();for(const c in CITIES
   if(d[b]===Infinity)return{cost:Infinity,routes:[]};const routes=[];for(let c=b;c!==a;){const r=prev[c];routes.push(r.id);c=r.a===c?r.b:r.a}
   return{cost:d[b],routes}}
 
-const TICKET_DEFS=[["Beijing","Tokyo"],["Shanghai","Singapore"],["Lhasa","Tokyo"],["Bangkok","Seoul"],["Hanoi","Beijing"],["Kathmandu","Hong Kong"],
+const TICKET_DEFS=[["Beijing","Tokyo"],["Shanghai","Singapore"],["Bangkok","Seoul"],["Hanoi","Beijing"],["Kathmandu","Hong Kong"],
 ["Harbin","Hong Kong"],["Ulaanbaatar","Hanoi"],["Sapporo","Shanghai"],["Manila","Beijing"],["Kunming","Taipei"],["Chengdu","Seoul"],["Xi'an","Busan"],
-["Vladivostok","Wuhan"],["Kolkata","Tokyo"],["Dunhuang","Shanghai"],["Kyoto","Hong Kong"],["Okinawa","Seoul"],["Siem Reap","Chengdu"],
+["Vladivostok","Wuhan"],["Dunhuang","Shanghai"],["Kyoto","Hong Kong"],["Okinawa","Seoul"],["Siem Reap","Chengdu"],
 ["Ho Chi Minh","Shanghai"],["Mandalay","Guilin"],["Chiang Mai","Wuhan"],["Da Nang","Qingdao"],["Lhasa","Manila"],["Kathmandu","Singapore"],
-["Ulaanbaatar","Tokyo"],["Pyongyang","Guilin"],["Hiroshima","Sapporo"],["Phuket","Hong Kong"],["Kuala Lumpur","Beijing"],["Yangon","Taipei"],
+["Ulaanbaatar","Tokyo"],["Pyongyang","Guilin"],["Hiroshima","Sapporo"],["Phuket","Hong Kong"],["Yangon","Taipei"],
 ["Cebu","Tokyo"],["Dunhuang","Bangkok"],["Harbin","Kyoto"],["Singapore","Manila"],["Wuhan","Hanoi"]];
 // ticket value = shortest possible route in trains
-const TICKETS=TICKET_DEFS.map(([a,b])=>({a,b,pts:shortest(a,b,r=>r.len).cost}));
+// Long routes: a separate deck. Each player is dealt one at the start; unkept ones leave the game.
+const LONG_DEFS=[["Singapore","Sapporo"],["Kolkata","Tokyo"],["Kathmandu","Vladivostok"],["Lhasa","Tokyo"],["Kuala Lumpur","Beijing"],["Cebu","Ulaanbaatar"]];
+const TICKETS=[...TICKET_DEFS.map(d=>[...d,false]),...LONG_DEFS.map(d=>[...d,true])].map(([a,b,long])=>({a,b,long,pts:shortest(a,b,r=>r.len).cost}));
 
 // ---------- Helpers ----------
 const $=id=>document.getElementById(id);
@@ -228,11 +232,11 @@ function log(m){G.log.unshift(m);if(G.log.length>80)G.log.pop()}
 function newGame(setup){clearTimeout(timer);
   G={players:setup.map((s,i)=>({...s,i,color:PCOL[i],hand:Object.fromEntries([...COLORS,"wild"].map(c=>[c,0])),trains:45,tickets:[],score:0})),
     deck:shuffle([...COLORS.flatMap(c=>Array(12).fill(c)),...Array(14).fill("wild")]),discard:[],faceUp:Array(5).fill(null),
-    tdeck:shuffle(TICKETS.map((_,i)=>i)),owner:ROUTES.map(()=>null),cur:0,drawn:0,finalLeft:-1,passes:0,log:[],over:false,pending:null};
+    tdeck:shuffle(TICKETS.map((_,i)=>i).filter(i=>!TICKETS[i].long)),ldeck:shuffle(TICKETS.map((_,i)=>i).filter(i=>TICKETS[i].long)),owner:ROUTES.map(()=>null),cur:0,drawn:0,finalLeft:-1,passes:0,log:[],over:false,pending:null};
   for(const p of G.players)for(let k=0;k<4;k++)p.hand[drawDeck()]++;
   refill();
-  for(const p of G.players){const offered=G.tdeck.splice(-3);
-    if(p.bot){p.tickets=chooseTickets(p,offered,2);G.tdeck.unshift(...offered.filter(t=>!p.tickets.includes(t)))}
+  for(const p of G.players){const offered=[G.ldeck.pop(),...G.tdeck.splice(-2)]; // 1 long + 2 regular
+    if(p.bot){p.tickets=chooseTickets(p,offered,2);G.tdeck.unshift(...offered.filter(t=>!p.tickets.includes(t)&&!TICKETS[t].long))}
     else G.pending={p:p.i,offered,min:2,initial:true}}
   log("New game. Everyone picks destination tickets.");
   render();if(G.pending&&!SIM)showTickets();else schedule()}
@@ -268,7 +272,7 @@ function drawTickets(){if(G.drawn||G.pending||!G.tdeck.length)return false;const
   G.pending={p:p.i,offered:G.tdeck.splice(-3).reverse(),min:1};log(`${p.name} drew destination tickets.`);sfx("ticket");
   if(p.bot)keepTickets(chooseTickets(p,G.pending.offered,1));else{render();showTickets()}return true}
 function keepTickets(keep){const pd=G.pending,p=G.players[pd.p];G.pending=null;p.tickets.push(...keep);
-  G.tdeck.unshift(...pd.offered.filter(t=>!keep.includes(t)));if(pd.initial)return;
+  G.tdeck.unshift(...pd.offered.filter(t=>!keep.includes(t)&&!TICKETS[t].long));if(pd.initial)return;
   log(`${p.name} kept ${keep.length} ticket${keep.length>1?"s":""}.`);G.passes=0;endTurn()}
 
 function endTurn(){const p=cur();G.drawn=0;
@@ -340,6 +344,7 @@ function simulate(n=30,levels=[0,1,2,2]){SIM=true;const wins=[0,0,0,0],totals=[0
   try{for(let g=0;g<n;g++){newGame(levels.map((l,i)=>({name:"B"+i+LEVELS[l],bot:true,level:l})));let k=0;
     while(!G.over&&k++<5000)botTurn(cur());console.assert(G.over,"game did not end");
     console.assert(G.players.every(p=>p.trains>=0&&Object.values(p.hand).every(v=>v>=0)),"negative stock");
+    console.assert(G.players.every(p=>p.tickets.filter(t=>TICKETS[t].long).length<=1)&&!G.tdeck.some(t=>TICKETS[t].long),"long ticket leaked");
     console.assert(G.deck.length+G.discard.length+G.faceUp.filter(Boolean).length+G.players.reduce((s,p)=>s+cardCount(p),0)===110,"card leak");
     wins[G.results[0].p.i]++;G.results.forEach(r=>totals[r.p.i]+=r.total)}}
   finally{SIM=false;G=null}return{wins,avg:totals.map(t=>Math.round(t/n))}}
@@ -416,10 +421,10 @@ function ov(html){overlay.innerHTML=`<div class="modal"><div class="grip">DRAG T
 const card=(c,inner)=>`<svg class="ic" viewBox="0 0 64 36"><use href="#${c==="wild"?"loco":"car"}"/></svg>${inner||""}`;
 // destination ticket: mini map with both cities and a dashed line between them
 function ticketHTML(t,cls){const T=TICKETS[t],[x1,y1]=XY(T.a),[x2,y2]=XY(T.b);
-  return`<div class="ticket ${cls}" data-t="${t}"><svg class="mm" viewBox="0 0 ${W} ${H}"><use href="#mini"/>
+  return`<div class="ticket ${cls}${T.long?" long":""}" data-t="${t}"><svg class="mm" viewBox="0 0 ${W} ${H}"><use href="#mini"/>
     <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#b45309" stroke-width="20" stroke-dasharray="40 26" stroke-linecap="round"/>
     <circle cx="${x1}" cy="${y1}" r="52" fill="#e5484d" stroke="#fff" stroke-width="16"/><circle cx="${x2}" cy="${y2}" r="52" fill="#e5484d" stroke="#fff" stroke-width="16"/></svg>
-    <span class="tt">${cls.includes("done")?"✓ ":""}${T.a} →<br>${T.b}</span><b>${T.pts}</b></div>`}
+    <span class="tt">${T.long?`<span class="ltag">LONG ROUTE</span>`:""}${cls.includes("done")?"✓ ":""}${T.a} →<br>${T.b}</span><b>${T.pts}</b></div>`}
 const closeOv=()=>overlay.classList.add("hidden");
 const nope=m=>{sfx("error");toast(m)};
 let toastT;function toast(m){if(SIM)return;const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),1800)}
@@ -493,7 +498,7 @@ function render(){if(SIM||!G)return;const me=human(),myTurn=cur()===me&&!G.over&
 
 function showTickets(){const pd=G.pending,sel=new Set(pd.offered);
   const draw=()=>{ov(`<h2>${pd.initial?"Choose your destinations":"New destination tickets"}</h2>
-    <p class="muted">Keep at least ${pd.min}. Connect both cities with your own routes by game end to score the points, or lose them.</p>
+    <p class="muted">Keep at least ${pd.min}.${pd.initial?' One is a <b>long route</b>: if you skip it, it leaves the game.':''} Connect both cities with your own routes by game end to score the points, or lose them.</p>
     ${pd.offered.map(t=>ticketHTML(t,"big"+(sel.has(t)?" sel":""))).join("")}
     <button class="primary wide" id="keepBtn" ${sel.size<pd.min?"disabled":""}>Keep ${sel.size}</button>`);
     overlay.querySelectorAll("[data-t]").forEach(el=>{const t=+el.dataset.t;el.onclick=()=>{sel.has(t)?sel.delete(t):sel.add(t);draw();hl(t)};
