@@ -1,0 +1,540 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jade Rails</title>
+<style>
+:root{--bg:#eef1f5;--panel:#fff;--ink:#1f2430;--muted:#6b7280;--line:#e3e7ee;--accent:#12a594;--sea:#d5e7f1;--land:#f6f2e9;--coast:#d9cfbb}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+.app{display:grid;grid-template-columns:minmax(0,1fr) 310px;gap:12px;padding:12px;height:100vh}
+.main{display:flex;flex-direction:column;gap:12px;min-height:0}
+.mapbox{flex:1;min-height:0;background:var(--sea);border-radius:16px;overflow:hidden;position:relative}
+#map{width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+#map:active{cursor:grabbing}
+.zoomctl{position:absolute;right:12px;bottom:12px;display:flex;flex-direction:column;gap:4px}
+.zoomctl button{width:36px;height:36px;padding:0;background:#fffffff0;box-shadow:0 2px 8px #0000001a;font-size:18px}
+#fx{pointer-events:none}
+.fx-glow{stroke-linecap:round;opacity:0;animation:glow 1.2s ease-out}
+@keyframes glow{0%{opacity:.9;stroke-width:6}100%{opacity:0;stroke-width:30}}
+.fx-pts{font:800 22px system-ui,sans-serif;text-anchor:middle;paint-order:stroke;stroke:#fff;stroke-width:5px;animation:rise 1.6s ease-out forwards}
+@keyframes rise{from{transform:translateY(6px);opacity:0}15%{opacity:1}to{transform:translateY(-34px);opacity:0}}
+.fx-path{stroke-width:9;stroke-linecap:round;stroke-dasharray:14 10;filter:drop-shadow(0 0 5px #f5b301);animation:march .6s linear infinite,fadeout 3.4s ease-in forwards}
+@keyframes march{to{stroke-dashoffset:-24}}
+@keyframes fadeout{0%,75%{opacity:.95}100%{opacity:0}}
+.fx-ring{fill:none;stroke:#f5b301;stroke-width:4;transform-box:fill-box;transform-origin:center;animation:ring 1.3s ease-out 2 both}
+@keyframes ring{from{transform:scale(1);opacity:1}to{transform:scale(4.5);opacity:0}}
+.banner{position:fixed;left:50%;top:16%;background:#fff;border-radius:18px;padding:16px 30px;text-align:center;box-shadow:0 14px 44px #0004;z-index:30;pointer-events:none;animation:pop 3.4s ease forwards}
+.banner .bt{font-weight:800;font-size:20px;color:#b45309}
+.banner b{display:block;font-size:30px;color:var(--accent)}
+.banner i{position:absolute;left:50%;top:50%;width:8px;height:12px;border-radius:2px;animation:conf 1.3s ease-out forwards}
+@keyframes conf{to{transform:translate(var(--x),var(--y)) rotate(var(--r));opacity:0}}
+@keyframes pop{0%{transform:translate(-50%,-24px) scale(.8);opacity:0}10%{transform:translate(-50%,0) scale(1.06);opacity:1}16%{transform:translate(-50%,0) scale(1)}85%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-12px)}}
+.statusbar{position:absolute;top:12px;left:12px;background:#fffffff0;border-radius:999px;padding:8px 14px;font-weight:600;box-shadow:0 2px 8px #0000001a;max-width:calc(100% - 24px)}
+.statusbar .final{color:#c2410c;margin-left:8px}
+.side{display:flex;flex-direction:column;gap:12px;min-height:0}
+.card{background:var(--panel);border-radius:14px;padding:12px;box-shadow:0 1px 2px #0000000d}
+h3{margin:0 0 8px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h2{margin:0 0 6px;font-size:18px}
+.titlebar{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;font-size:16px}
+.player{display:flex;align-items:center;gap:8px;padding:6px 8px;border-radius:10px;margin-bottom:2px}
+.player.active{background:#f4f6f9;box-shadow:inset 3px 0 0 var(--pc)}
+.dot{width:12px;height:12px;border-radius:50%;background:var(--pc);flex:none}
+.pname{flex:1;font-weight:600;min-width:0}
+.sub,.stats{font-size:11px;color:var(--muted);font-weight:400}
+.stats{text-align:right}
+.score{font-weight:700;font-size:17px;min-width:34px;text-align:right}
+.market{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:8px}
+.tcard{position:relative;height:58px;border-radius:9px;border:1px solid #0000001f;cursor:pointer;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;transition:transform .1s;box-shadow:inset 0 0 0 3px #ffffff59,0 1px 2px #0002;overflow:hidden}
+.tcard::after{content:"";position:absolute;left:0;right:0;bottom:9px;height:3px;background:repeating-linear-gradient(90deg,currentColor 0 4px,transparent 4px 8px);opacity:.45}
+.tcard .ic{width:74%;height:auto;filter:drop-shadow(0 1px 0 #0003)}
+.tcard .n{position:absolute;top:3px;right:4px;min-width:20px;height:20px;border-radius:10px;background:#fff;color:#1f2430;font-size:12px;line-height:20px;text-align:center;box-shadow:0 1px 2px #0003}
+.tcard .lbl{position:absolute;top:3px;left:6px;font-size:9px;letter-spacing:.08em;opacity:.85}
+.market .tcard:hover{transform:translateY(-2px)}
+.tcard.disabled{opacity:.45;pointer-events:none}
+.tcard.empty{background:#f1f3f6;border-style:dashed;cursor:default}
+.c-red{background:#e5484d}.c-orange{background:#f76b15}.c-yellow{background:#f2c200}.c-green{background:#30a46c}
+.c-blue{background:#3e7bfa}.c-purple{background:#8e4ec6}.c-black{background:#2f3136}.c-white{background:#f7f7f5;color:#4b5563}.c-yellow{color:#5c4600}
+.c-wild{background:linear-gradient(135deg,#e5484d,#f2c200,#30a46c,#3e7bfa,#8e4ec6)}
+.deck{background:repeating-linear-gradient(45deg,#334155 0 6px,#3d4b61 6px 12px);flex-direction:column;font-size:15px}.deck small{font-size:9px;letter-spacing:.1em;opacity:.8}
+button{font:inherit;border:0;border-radius:10px;padding:9px 14px;cursor:pointer;font-weight:600}
+button:disabled{opacity:.45;cursor:default}
+.primary{background:var(--accent);color:#fff}
+.ghost{background:#eef1f5;color:var(--ink)}
+.wide{width:100%}
+.logcard{flex:1;min-height:120px;display:flex;flex-direction:column}
+.log{flex:1;min-height:0;overflow:auto;font-size:12px;color:var(--muted)}
+.log div{padding:2px 0;border-bottom:1px solid #f1f3f6}
+.bottom{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:12px}
+.hand{display:flex;gap:6px;flex-wrap:wrap}
+.hand{flex-wrap:nowrap}.hand .tcard{flex:1 1 0;min-width:0;max-width:62px;height:76px;cursor:default}
+.hand .tcard.zero{opacity:.25}
+.tickets{display:flex;gap:6px;flex-wrap:wrap;max-height:120px;overflow:auto}
+.ticket{border:1px solid var(--line);border-radius:8px;padding:5px 9px;font-size:12px;background:#fffdf6;cursor:default}
+.ticket b{margin-left:8px}
+.ticket{display:flex;align-items:center;gap:8px}
+.ticket .mm{width:58px;height:47px;border-radius:5px;flex:none;border:1px solid #0000001a}
+.ticket .tt{flex:1;line-height:1.25}
+.ticket.big .mm{width:96px;height:78px}
+.ticket.done{background:#e7f6ef;border-color:#9bd5b9}
+.ticket.big{font-size:14px;padding:10px 12px;cursor:pointer;display:flex;justify-content:space-between;margin-bottom:8px;opacity:.55}
+.ticket.big.sel{opacity:1;border-color:var(--accent);box-shadow:0 0 0 2px var(--accent) inset}
+.muted{color:var(--muted);margin:0 0 12px}
+.overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;padding:16px;z-index:10;pointer-events:none}
+.hidden{display:none}
+.modal{background:#fff;border-radius:16px;padding:0 20px 20px;max-width:440px;width:100%;box-shadow:0 12px 48px #0004,0 0 0 1px #0000000f;max-height:90vh;overflow:auto;pointer-events:auto}
+.grip{cursor:move;touch-action:none;user-select:none;text-align:center;color:#9aa3ae;font-size:11px;letter-spacing:.1em;padding:8px 0 10px;margin:0 -20px 4px;border-bottom:1px solid var(--line)}
+.grip::before{content:"";display:block;width:40px;height:4px;border-radius:2px;background:#d1d5db;margin:0 auto 4px}
+.row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.row label{flex:1}
+input,select{font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:#fff}
+.payopts button{display:flex;align-items:center;gap:8px;width:100%;margin-bottom:6px;background:#f4f6f9}
+.chip{width:16px;height:16px;border-radius:4px;display:inline-block;border:1px solid #0002}
+table{width:100%;border-collapse:collapse;font-size:13px;margin:8px 0 14px}
+td,th{padding:6px 4px;text-align:right;border-bottom:1px solid var(--line)}
+td:first-child,th:first-child{text-align:left}
+.toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:#1f2430;color:#fff;padding:9px 16px;border-radius:999px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20}
+.toast.show{opacity:1}
+.route{cursor:pointer}
+.route:hover rect{stroke:#1f2430;stroke-width:2}
+.route.owned{cursor:default}
+.fresh{animation:drop .45s cubic-bezier(.3,1.6,.6,1) both}
+@keyframes drop{from{transform:translateY(-18px);opacity:0}to{transform:none;opacity:1}}
+.city circle{fill:#fff;stroke:#334155;stroke-width:2.5}
+.city.goal circle{stroke:#d97706;stroke-width:3.5;fill:#fff7e6}
+.city.hl circle{fill:#fcd34d;stroke:#b45309;stroke-width:4}
+.city text{font-size:16px;font-weight:700;fill:#1f2937;paint-order:stroke;stroke:#fbf8f0;stroke-width:4.5px;stroke-linejoin:round;pointer-events:none}
+.sea text{font-size:13px;font-style:italic;fill:#7fa3b8;letter-spacing:.1em}
+@media (max-width:820px){.app{grid-template-columns:1fr;height:auto}.mapbox{height:85vw;flex:none}.bottom{grid-template-columns:1fr}.logcard{max-height:200px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="main">
+    <div class="mapbox"><svg id="map" viewBox="0 0 1024 832" preserveAspectRatio="xMidYMid meet"></svg><div id="status" class="statusbar"></div>
+      <div class="zoomctl"><button data-z=".7" title="Zoom in">+</button><button data-z="1.4" title="Zoom out">−</button><button data-z="0" title="Show whole map">⤢</button></div></div>
+    <div class="bottom">
+      <div class="card"><h3>Your cards</h3><div id="hand" class="hand"></div></div>
+      <div class="card"><h3>Your tickets</h3><div id="tickets" class="tickets"></div></div>
+    </div>
+  </div>
+  <aside class="side">
+    <div class="card"><div class="titlebar"><b>Jade Rails</b><span><button id="muteBtn" class="ghost" title="Sound on/off"></button> <button id="newBtn" class="ghost">New game</button></span></div><div id="players"></div></div>
+    <div class="card"><h3>Market</h3><div id="market" class="market"></div><button id="ticketBtn" class="primary wide">Draw destination tickets</button></div>
+    <div class="card logcard"><h3>Log</h3><div id="log" class="log"></div></div>
+  </aside>
+</div>
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="car" viewBox="0 0 64 36"><rect x="5" y="5" width="54" height="3" rx="1.5" fill="currentColor"/><rect x="3" y="8" width="58" height="18" rx="3" fill="currentColor"/>
+<g fill="#00000033"><rect x="8" y="12" width="9" height="7" rx="1.5"/><rect x="21" y="12" width="9" height="7" rx="1.5"/><rect x="34" y="12" width="9" height="7" rx="1.5"/><rect x="47" y="12" width="9" height="7" rx="1.5"/></g>
+<rect x="0" y="22" width="64" height="2" fill="currentColor"/><g fill="currentColor"><circle cx="13" cy="29" r="4.5"/><circle cx="24" cy="29" r="4.5"/><circle cx="40" cy="29" r="4.5"/><circle cx="51" cy="29" r="4.5"/></g></symbol>
+<symbol id="loco" viewBox="0 0 64 36"><g fill="currentColor"><rect x="9" y="3" width="7" height="10" rx="1"/><rect x="6" y="1" width="13" height="3" rx="1"/><rect x="5" y="11" width="36" height="15" rx="6"/><circle cx="27" cy="11" r="3.5"/>
+<rect x="39" y="4" width="20" height="22" rx="2"/><rect x="37" y="2" width="24" height="3" rx="1"/><path d="M5 22 L0 32 L10 32 Z"/><circle cx="17" cy="28" r="6"/><circle cx="31" cy="28" r="6"/><circle cx="51" cy="30" r="4"/></g>
+<rect x="44" y="8" width="11" height="8" rx="1.5" fill="#00000033"/><rect x="12" y="27" width="22" height="2" fill="#00000040"/></symbol></defs></svg>
+<div id="overlay" class="overlay hidden"></div>
+<div id="toast" class="toast"></div>
+<script>
+// ---------- Data ----------
+const CITIES={"Ulaanbaatar":[106.9,47.9],"Harbin":[126.6,45.8],"Vladivostok":[131.9,43.1],"Sapporo":[141.4,43.1],"Beijing":[116.4,39.9],
+"Dunhuang":[94.7,40.1],"Xi'an":[108.9,34.3],"Qingdao":[120.4,36.1],"Lhasa":[91.1,29.7],"Kathmandu":[85.3,27.7],"Kolkata":[88.4,22.6],
+"Chengdu":[104.1,30.7],"Kunming":[102.7,25],"Guilin":[110.3,25.3],"Wuhan":[114.3,30.6],"Shanghai":[121.5,31.2],"Hong Kong":[114.2,22.3],
+"Taipei":[121.5,25],"Pyongyang":[125.8,39],"Seoul":[127,37.6],"Busan":[129,35.1],"Hiroshima":[132.5,34.4],"Kyoto":[135.8,35],"Tokyo":[139.7,35.7],
+"Okinawa":[127.7,26.2],"Hanoi":[105.8,21],"Da Nang":[108.2,16.1],"Ho Chi Minh":[106.7,10.8],"Siem Reap":[103.9,13.4],"Bangkok":[100.5,13.8],
+"Chiang Mai":[99,18.8],"Phuket":[98.4,8],"Kuala Lumpur":[101.7,3.1],"Singapore":[103.8,1.35],"Yangon":[96.2,16.8],"Mandalay":[96.1,22],
+"Manila":[121,14.6],"Cebu":[123.9,10.3]};
+// label placement [dx, dy, anchor] for crowded spots; default is centered below
+const LABEL={"Pyongyang":[-11,5,"end"],"Hiroshima":[0,-12,"middle"],"Busan":[-11,5,"end"],"Kuala Lumpur":[-11,5,"end"],"Bangkok":[-11,5,"end"],
+"Yangon":[-11,5,"end"],"Kathmandu":[11,5,"start"],"Kolkata":[-11,5,"end"],"Sapporo":[-11,5,"end"],"Taipei":[11,5,"start"],"Okinawa":[11,5,"start"]};
+const W=1024,H=832,LL=([lon,lat])=>[(lon-83)*16,(50-lat)*16];
+const LAND=[
+  [[78,58],[141,58],[141.5,53],[140.5,50],[140.2,48.3],[138.5,46.5],[135.5,43.8],[133,42.7],[132.3,42.8],[131,42.4],[129.8,41],[128,39.6],[129.4,37],[129.4,35.4],[129.2,35],[128,34.8],[126.5,34.3],[126.3,35.2],[126.6,36.5],[126.6,37.5],[125.5,37.7],[124.8,38.5],[125.1,39.5],[124.3,39.9],[122.2,39.4],[121.2,38.8],[121.6,39.6],[122,40.6],[121,40.8],[119.5,39.9],[118,39.1],[117.7,38.5],[118.5,37.5],[119.2,37.2],[120.7,37.8],[122.6,37.4],[122.3,36.9],[120.8,36.4],[120.6,35.9],[119.4,35],[120.3,34.3],[120.9,32.6],[121.9,31.7],[121.9,30.9],[121.9,30.2],[121.5,28.6],[120.5,27.3],[119.7,26],[119.7,25.5],[118.7,24.6],[117.4,23.6],[116,22.8],[114.4,22.1],[113.5,22.1],[112,21.7],[110.6,21.2],[110.2,20.3],[109.8,21.4],[108.5,21.6],[107,21],[106.6,20.2],[105.8,19],[105.9,18.2],[106.6,17.4],[107.8,16.3],[108.4,16],[108.9,15.2],[109.3,13.4],[109.2,11.6],[108,10.8],[107,10.3],[106.2,9.5],[105.1,8.6],[104.8,9.5],[104.6,10.4],[103.5,10.6],[102.9,11.6],[102.2,12.3],[101,12.7],[100.9,13.4],[100,13.3],[99.9,12],[99.4,10.5],[99.2,9.2],[100.3,8.3],[100.5,7],[101.2,6.8],[102.2,6],[103.4,4.6],[103.5,2.6],[104.3,1.4],[103.5,1.25],[101.3,2.8],[100.4,4.5],[100.3,6.2],[98.7,7.7],[98.2,7.7],[98.5,9],[98.6,10.3],[98.2,12],[97.7,15],[97.6,16.5],[96.8,16.4],[96.3,16.5],[95.3,15.8],[94.3,16],[94.5,18.5],[93.6,19.5],[92.3,20.7],[91.9,22.4],[90.6,22.3],[89.5,21.9],[88,21.6],[86.8,21.2],[86,19.8],[84.5,18.5],[82.3,16.6],[80.3,15.5],[80.1,13],[79.8,10.3],[78,9]],
+  [[108.6,19.2],[110,20.1],[111,19.6],[110.5,18.5],[109.5,18.2],[108.7,18.5]],
+  [[121.5,25.3],[122,24.5],[121,22],[120.7,22],[120.1,23],[120.6,24.5]],
+  [[141.4,41.4],[142,39.5],[141,38.3],[140.9,36.9],[140.8,35.7],[139.8,35],[138.8,34.6],[137,34.6],[135.2,33.6],[134.6,34.2],[133,34],[131,33.9],[130.9,34.3],[132,35.4],[133.5,35.5],[135.8,35.6],[136.8,37.3],[137.3,36.8],[138.8,37.8],[139.9,39.5],[140,40.8],[140.6,41.2]],
+  [[130,33.9],[131,33.9],[131.9,33],[131.3,31.4],[130.6,31],[130.2,31.4],[129.7,33]],
+  [[132.5,33.8],[134.2,34.3],[134.7,33.8],[133,32.8]],
+  [[140,41.4],[141.2,41.8],[142.5,42.2],[143.3,42],[145.5,43.3],[145.2,44.3],[142,45.5],[141.6,45.3],[141.4,43.2],[140.3,43.2],[139.9,42.4]],
+  [[142,46],[143.5,46.3],[143,49.2],[144,53],[142.5,54.3],[142,51],[142.2,48]],
+  [[120.6,18.5],[122.3,18.5],[122.2,16.5],[121.6,15.8],[121.9,14],[124,13],[124,12.4],[122,13.2],[120.6,14.2],[120,16],[120.3,17.5]],
+  [[121,13.2],[121.5,13.3],[121.4,12.3],[120.9,12.5]],
+  [[122.2,11.5],[123.5,11.8],[125,11.3],[125.3,10.2],[123.8,9.6],[122.6,10],[122,10.8]],
+  [[122,8],[124,9],[126.5,9.5],[126,6.3],[124.5,6],[123.5,7.5]],
+  [[117.2,8.4],[119.6,11.4],[119.4,10.6],[117.5,8.2]],
+  [[95.3,5.6],[97.5,5.2],[100.4,2.2],[103.8,-1],[105.8,-5.8],[104.5,-5.9],[101,-2.5],[98.7,1.7],[96.5,3.7]],
+  [[109,1.5],[109.6,2],[111,1.6],[113,3.2],[115.5,5.3],[117,7],[119,5.2],[118,4.3],[118.5,1],[117.5,-1],[116.5,-4],[110.2,-3],[109,-1]],
+  [[127.6,26.8],[128.3,26.7],[127.8,26],[127.6,26.1]]];
+const XY=c=>LL(CITIES[c]);
+const COLORS=["red","orange","yellow","green","blue","purple","black","white"];
+const HEX={red:"#e5484d",orange:"#f76b15",yellow:"#f2c200",green:"#30a46c",blue:"#3e7bfa",purple:"#8e4ec6",black:"#2f3136",white:"#f7f7f5",gray:"#b9bfc8"};
+const PTS=[0,1,2,4,7,10,15];
+const PCOL=["#12a594","#d6409f","#a1662f","#5b5bd6"];
+const LEVELS=["Easy","Medium","Hard"];
+const BOT_NAMES=["Mei","Kenji","Arun"];
+
+// [cityA, cityB, color(s)] — two colors = double route. Length comes from map distance.
+const ROUTE_DEFS=[["Ulaanbaatar","Harbin","black"],["Ulaanbaatar","Beijing","blue"],["Ulaanbaatar","Dunhuang","yellow"],["Harbin","Vladivostok","orange"],
+["Harbin","Beijing","green","red"],["Harbin","Pyongyang","gray"],["Vladivostok","Pyongyang","yellow"],["Vladivostok","Sapporo","white"],
+["Beijing","Pyongyang","purple"],["Beijing","Qingdao","orange"],["Beijing","Xi'an","yellow"],["Beijing","Wuhan","gray","black"],
+["Dunhuang","Xi'an","red"],["Dunhuang","Lhasa","purple"],["Dunhuang","Chengdu","gray"],["Lhasa","Kathmandu","blue"],["Lhasa","Chengdu","white"],
+["Lhasa","Kunming","gray"],["Kathmandu","Kolkata","green"],["Kolkata","Lhasa","orange"],["Kolkata","Mandalay","red"],["Kolkata","Yangon","yellow"],
+["Mandalay","Yangon","green"],["Mandalay","Kunming","black"],["Mandalay","Chiang Mai","purple"],["Yangon","Chiang Mai","gray"],["Yangon","Bangkok","blue"],
+["Chiang Mai","Bangkok","orange"],["Chiang Mai","Hanoi","white"],["Kunming","Hanoi","red"],["Kunming","Chengdu","yellow"],["Kunming","Guilin","blue"],
+["Chengdu","Xi'an","green"],["Chengdu","Wuhan","purple"],["Xi'an","Wuhan","white"],["Wuhan","Shanghai","orange","blue"],["Wuhan","Guilin","gray"],
+["Wuhan","Hong Kong","red"],["Guilin","Hong Kong","green"],["Guilin","Hanoi","black"],["Qingdao","Shanghai","red"],["Qingdao","Seoul","gray"],
+["Shanghai","Taipei","yellow"],["Shanghai","Hong Kong","purple"],["Shanghai","Hiroshima","gray"],["Taipei","Hong Kong","gray"],["Taipei","Okinawa","green"],
+["Taipei","Manila","blue"],["Okinawa","Hiroshima","red"],["Hong Kong","Manila","orange"],["Hong Kong","Da Nang","purple"],["Hanoi","Da Nang","yellow"],
+["Da Nang","Ho Chi Minh","white"],["Da Nang","Siem Reap","gray"],["Bangkok","Siem Reap","red"],["Siem Reap","Ho Chi Minh","green"],["Bangkok","Phuket","purple"],
+["Phuket","Kuala Lumpur","black"],["Kuala Lumpur","Singapore","gray","gray"],["Ho Chi Minh","Singapore","orange"],["Ho Chi Minh","Manila","gray"],
+["Manila","Cebu","yellow"],["Cebu","Singapore","black"],["Pyongyang","Seoul","gray"],["Seoul","Busan","white"],["Busan","Hiroshima","gray"],
+["Hiroshima","Kyoto","orange","purple"],["Kyoto","Tokyo","red","yellow"],["Tokyo","Sapporo","blue"]];
+const ROUTES=[];
+for(const [a,b,...cols] of ROUTE_DEFS){const f=ROUTES.length,[x1,y1]=XY(a),[x2,y2]=XY(b);
+  const len=Math.max(1,Math.min(6,Math.round(Math.hypot(x2-x1,y2-y1)/42)));
+  cols.forEach((color,i)=>ROUTES.push({id:ROUTES.length,a,b,color,len,pair:cols.length>1?f+1-i:-1,off:cols.length>1?(i?5.5:-5.5):0}))}
+const ADJ={};for(const c in CITIES)ADJ[c]=[];ROUTES.forEach(r=>{ADJ[r.a].push(r);ADJ[r.b].push(r)});
+
+// ponytail: O(V^2) Dijkstra, fine for 44 cities
+function shortest(a,b,w){const d={},prev={},done=new Set();for(const c in CITIES)d[c]=Infinity;d[a]=0;
+  for(;;){let u=null;for(const c in d)if(!done.has(c)&&(u===null||d[c]<d[u]))u=c;if(u===null||d[u]===Infinity||u===b)break;done.add(u);
+    for(const r of ADJ[u]){const wt=w(r);if(wt===Infinity)continue;const v=r.a===u?r.b:r.a;if(d[u]+wt<d[v]){d[v]=d[u]+wt;prev[v]=r}}}
+  if(d[b]===Infinity)return{cost:Infinity,routes:[]};const routes=[];for(let c=b;c!==a;){const r=prev[c];routes.push(r.id);c=r.a===c?r.b:r.a}
+  return{cost:d[b],routes}}
+
+const TICKET_DEFS=[["Beijing","Tokyo"],["Shanghai","Singapore"],["Lhasa","Tokyo"],["Bangkok","Seoul"],["Hanoi","Beijing"],["Kathmandu","Hong Kong"],
+["Harbin","Hong Kong"],["Ulaanbaatar","Hanoi"],["Sapporo","Shanghai"],["Manila","Beijing"],["Kunming","Taipei"],["Chengdu","Seoul"],["Xi'an","Busan"],
+["Vladivostok","Wuhan"],["Kolkata","Tokyo"],["Dunhuang","Shanghai"],["Kyoto","Hong Kong"],["Okinawa","Seoul"],["Siem Reap","Chengdu"],
+["Ho Chi Minh","Shanghai"],["Mandalay","Guilin"],["Chiang Mai","Wuhan"],["Da Nang","Qingdao"],["Lhasa","Manila"],["Kathmandu","Singapore"],
+["Ulaanbaatar","Tokyo"],["Pyongyang","Guilin"],["Hiroshima","Sapporo"],["Phuket","Hong Kong"],["Kuala Lumpur","Beijing"],["Yangon","Taipei"],
+["Cebu","Tokyo"],["Dunhuang","Bangkok"],["Harbin","Kyoto"],["Singapore","Manila"],["Wuhan","Hanoi"]];
+// ticket value = shortest possible route in trains
+const TICKETS=TICKET_DEFS.map(([a,b])=>({a,b,pts:shortest(a,b,r=>r.len).cost}));
+
+// ---------- Helpers ----------
+const $=id=>document.getElementById(id);
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const pick=a=>a[Math.random()*a.length|0];
+const cardCount=p=>Object.values(p.hand).reduce((a,b)=>a+b,0);
+let G=null,SIM=false,timer=null;
+const cur=()=>G.players[G.cur];
+const human=()=>G.players[0];
+function log(m){G.log.unshift(m);if(G.log.length>80)G.log.pop()}
+
+// ---------- Rules ----------
+function newGame(setup){clearTimeout(timer);
+  G={players:setup.map((s,i)=>({...s,i,color:PCOL[i],hand:Object.fromEntries([...COLORS,"wild"].map(c=>[c,0])),trains:45,tickets:[],score:0})),
+    deck:shuffle([...COLORS.flatMap(c=>Array(12).fill(c)),...Array(14).fill("wild")]),discard:[],faceUp:Array(5).fill(null),
+    tdeck:shuffle(TICKETS.map((_,i)=>i)),owner:ROUTES.map(()=>null),cur:0,drawn:0,finalLeft:-1,passes:0,log:[],over:false,pending:null};
+  for(const p of G.players)for(let k=0;k<4;k++)p.hand[drawDeck()]++;
+  refill();
+  for(const p of G.players){const offered=G.tdeck.splice(-3);
+    if(p.bot){p.tickets=chooseTickets(p,offered,2);G.tdeck.unshift(...offered.filter(t=>!p.tickets.includes(t)))}
+    else G.pending={p:p.i,offered,min:2,initial:true}}
+  log("New game. Everyone picks destination tickets.");
+  render();if(G.pending&&!SIM)showTickets();else schedule()}
+
+function drawDeck(){if(!G.deck.length){G.deck=shuffle(G.discard);G.discard=[]}return G.deck.pop()||null}
+function refill(){for(let t=0;t<4;t++){for(let i=0;i<5;i++)if(!G.faceUp[i])G.faceUp[i]=drawDeck();
+  if(t===3||G.faceUp.filter(c=>c==="wild").length<3)return;
+  log("Three wilds face-up: market reshuffled.");G.discard.push(...G.faceUp.filter(Boolean));G.faceUp=Array(5).fill(null)}}
+const canDrawAny=second=>G.deck.length||G.discard.length||G.faceUp.some(c=>c&&(!second||c!=="wild"));
+
+function takeFace(i){const c=G.faceUp[i];if(!c||(c==="wild"&&G.drawn))return false;const p=cur();
+  p.hand[c]++;G.faceUp[i]=null;refill();sfx(c==="wild"?"wild":"card");log(`${p.name} took a face-up ${c==="wild"?"wild":c} card.`);afterDraw(c==="wild");return true}
+function takeDeck(){const c=drawDeck();if(!c)return false;const p=cur();p.hand[c]++;sfx("card");
+  if(p.bot)log(`${p.name} drew from the deck.`);else{log(`You drew a ${c} card from the deck.`);toast(`You drew: ${c}`)}
+  afterDraw(false);return true}
+function afterDraw(wild){G.passes=0;G.drawn++;if(wild||G.drawn>=2||!canDrawAny(true))endTurn();else render()}
+
+function free(r,p){if(G.owner[r.id]!==null)return false;if(r.pair<0)return true;const o=G.owner[r.pair];
+  return o===null||(o!==p.i&&G.players.length>3)} // doubles: both usable only with 4 players, never both by one player
+const routeOk=(r,p)=>free(r,p)&&p.trains>=r.len;
+function payOptions(r,p){const o=(r.color==="gray"?COLORS:[r.color]).filter(c=>p.hand[c]&&p.hand[c]+p.hand.wild>=r.len);
+  if(p.hand.wild>=r.len)o.push("wild");return o}
+function claim(rid,c){const r=ROUTES[rid],p=cur();if(G.drawn||!routeOk(r,p)||!payOptions(r,p).includes(c))return false;
+  const n=c==="wild"?0:Math.min(p.hand[c],r.len);p.hand[c]-=n;p.hand.wild-=r.len-n;
+  G.discard.push(...Array(n).fill(c),...Array(r.len-n).fill("wild"));
+  const before=p.tickets.filter(t=>connected(p,TICKETS[t].a,TICKETS[t].b));G.owner[rid]=p.i;G.lastClaim={rid,at:Date.now()};p.trains-=r.len;p.score+=PTS[r.len];G.passes=0;
+  sfx("claim",r.len);fxClaim(r,p.i);
+  if(!p.bot)p.tickets.filter(t=>!before.includes(t)&&connected(p,TICKETS[t].a,TICKETS[t].b)).forEach((t,i)=>{
+    sfx("done",0,r.len*.14+.5+i*1.4);if(!SIM)setTimeout(()=>fxTicket(t),r.len*140+500+i*1400)});
+  log(`${p.name} claimed ${r.a} – ${r.b} (+${PTS[r.len]}).`);endTurn();return true}
+
+function drawTickets(){if(G.drawn||G.pending||!G.tdeck.length)return false;const p=cur();
+  G.pending={p:p.i,offered:G.tdeck.splice(-3).reverse(),min:1};log(`${p.name} drew destination tickets.`);sfx("ticket");
+  if(p.bot)keepTickets(chooseTickets(p,G.pending.offered,1));else{render();showTickets()}return true}
+function keepTickets(keep){const pd=G.pending,p=G.players[pd.p];G.pending=null;p.tickets.push(...keep);
+  G.tdeck.unshift(...pd.offered.filter(t=>!keep.includes(t)));if(pd.initial)return;
+  log(`${p.name} kept ${keep.length} ticket${keep.length>1?"s":""}.`);G.passes=0;endTurn()}
+
+function endTurn(){const p=cur();G.drawn=0;
+  if(G.finalLeft>0){if(--G.finalLeft===0)return finish()}
+  else if(G.finalLeft<0&&p.trains<=2){G.finalLeft=G.players.length;log(`${p.name} is down to ${p.trains} trains: everyone gets one final turn!`);sfx("final")}
+  if(G.passes>=G.players.length*2)return finish(); // nobody can move
+  G.cur=(G.cur+1)%G.players.length;if(!cur().bot)sfx("turn",0,.6);render();schedule()}
+function pass(){G.passes++;log(`${cur().name} passed.`);endTurn()}
+function schedule(){if(SIM||G.over||G.pending)return;clearTimeout(timer);if(cur().bot)timer=setTimeout(()=>botTurn(cur()),850)}
+
+function connected(p,a,b){const seen=new Set([a]),q=[a];while(q.length){const c=q.pop();if(c===b)return true;
+  for(const r of ADJ[c])if(G.owner[r.id]===p.i){const n=r.a===c?r.b:r.a;if(!seen.has(n)){seen.add(n);q.push(n)}}}return false}
+// ponytail: brute-force trail search, fine for <=45 trains per player
+function longest(p){const mine=ROUTES.filter(r=>G.owner[r.id]===p.i),used=new Set();let best=0;
+  const dfs=(c,len)=>{if(len>best)best=len;for(const r of mine)if(!used.has(r.id)&&(r.a===c||r.b===c)){used.add(r.id);dfs(r.a===c?r.b:r.a,len+r.len);used.delete(r.id)}};
+  for(const c of new Set(mine.flatMap(r=>[r.a,r.b])))dfs(c,0);return best}
+function finish(){G.over=true;clearTimeout(timer);const L=G.players.map(longest),max=Math.max(...L);
+  G.results=G.players.map((p,i)=>{const done=p.tickets.filter(t=>connected(p,TICKETS[t].a,TICKETS[t].b));
+    const plus=done.reduce((s,t)=>s+TICKETS[t].pts,0),minus=p.tickets.filter(t=>!done.includes(t)).reduce((s,t)=>s+TICKETS[t].pts,0);
+    const bonus=max>0&&L[i]===max?10:0;return{p,routes:p.score,plus,minus,bonus,long:L[i],done:done.length,total:p.score+plus-minus+bonus}})
+    .sort((a,b)=>b.total-a.total||b.done-a.done||b.long-a.long);
+  log(`Game over. ${G.results[0].p.name} wins!`);sfx(G.results[0].p===human()?"win":"lose",0,.4);render();if(!SIM)showEnd()}
+
+// ---------- Bots ----------
+// All levels plan shortest paths for their tickets and collect matching cards.
+// Easy: random moves 30% of the time, sloppy card picks, keeps random tickets, never takes extra tickets.
+// Medium: random moves 12% of the time, keeps tickets up to ~60% of its trains.
+// Hard: never random, keeps only tickets it can comfortably finish (~40% of trains), reusing its network.
+// ponytail: bottleneck-first and wild-grabbing were tried and lost in simulate(); add back only if they measurably win.
+const RANDOM=[.3,.12,0];
+const wFor=p=>r=>G.owner[r.id]===p.i?0:free(r,p)?r.len:Infinity;
+function makePlan(p){const w=wFor(p),need=new Map();let open=0;
+  for(const t of p.tickets){const T=TICKETS[t];if(connected(p,T.a,T.b))continue;const s=shortest(T.a,T.b,w);if(s.cost>p.trains)continue;open++;
+    for(const rid of s.routes)if(G.owner[rid]===null)need.set(rid,(need.get(rid)||0)+ROUTES[rid].len)}
+  return{need,open}}
+function chooseTickets(p,offered,min){const L=p.level;
+  if(L===0)return shuffle([...offered]).slice(0,Math.min(offered.length,min+(Math.random()<.3?1:0)));
+  const w=wFor(p),used=new Set();let budget=p.trains*(L===2?.4:.6);
+  for(const rid of makePlan(p).need.keys()){used.add(rid);budget-=ROUTES[rid].len}
+  const extra=x=>x.s.cost===Infinity?999:x.s.routes.filter(id=>!used.has(id)&&G.owner[id]===null).reduce((a,id)=>a+ROUTES[id].len,0);
+  const rest=offered.map(t=>({t,s:shortest(TICKETS[t].a,TICKETS[t].b,w)})),keep=[];
+  while(rest.length){rest.sort((a,b)=>extra(a)-extra(b));
+    const x=rest[0],e=extra(x);if(keep.length>=min&&e>budget)break;keep.push(x.t);rest.shift();budget-=e;x.s.routes.forEach(id=>used.add(id))}
+  return keep}
+function botTurn(p){if(G.over||G.pending||cur()!==p)return;
+  const L=p.level,plan=makePlan(p),afford=r=>routeOk(r,p)&&payOptions(r,p).length>0;
+  const anyAfford=()=>ROUTES.filter(afford).sort((a,b)=>b.len-a.len);
+  const endgame=G.finalLeft>0||G.players.some(q=>q.trains<=3);
+  if(Math.random()<RANDOM[L]){const a=anyAfford();return a.length&&Math.random()<.5?botClaim(p,pick(a)):botDraw(p,new Set())}
+  const c=[...plan.need.keys()].map(i=>ROUTES[i]).filter(afford).sort((a,b)=>plan.need.get(b.id)-plan.need.get(a.id));
+  if(c.length)return botClaim(p,c[0]);
+  if(!plan.open&&!endgame&&L>0&&p.trains>=18&&G.tdeck.length)return drawTickets();
+  const a=anyAfford();
+  if(a.length&&(endgame||(!plan.open&&a[0].len>=2)||!canDrawAny()))return botClaim(p,a[0]);
+  botDraw(p,wants(p,plan.need))}
+function wants(p,need){const w=new Set();for(const rid of need.keys()){const r=ROUTES[rid];
+  w.add(r.color==="gray"?COLORS.reduce((a,c)=>p.hand[c]>p.hand[a]?c:a):r.color)}return w}
+function botClaim(p,r){const o=payOptions(r,p).sort((x,y)=>(y==="wild"?-1:p.hand[y])-(x==="wild"?-1:p.hand[x]));claim(r.id,o[0])}
+function botDraw(p,want){if(!canDrawAny()){const a=ROUTES.filter(r=>routeOk(r,p)&&payOptions(r,p).length);return a.length?botClaim(p,a[0]):pass()}
+  botPick(p,want,true);if(!G.over&&cur()===p&&G.drawn===1)botPick(p,want,false)||endTurn()}
+function botPick(p,want,first){const F=G.faceUp,ok=i=>F[i]&&(first||F[i]!=="wild");
+  let i=F.findIndex((c,j)=>ok(j)&&c!=="wild"&&want.has(c));
+  if(p.level===0&&Math.random()<.4){const o=[0,1,2,3,4].filter(ok);if(o.length)i=pick(o)}
+  if(i>=0)return takeFace(i);if(takeDeck())return true;
+  i=[0,1,2,3,4].find(ok);return i!==undefined&&takeFace(i)}
+
+// Self-check: all-bot games must end and score sanely. Run simulate() in the console.
+function simulate(n=30,levels=[0,1,2,2]){SIM=true;const wins=[0,0,0,0],totals=[0,0,0,0];
+  try{for(let g=0;g<n;g++){newGame(levels.map((l,i)=>({name:"B"+i+LEVELS[l],bot:true,level:l})));let k=0;
+    while(!G.over&&k++<5000)botTurn(cur());console.assert(G.over,"game did not end");
+    console.assert(G.players.every(p=>p.trains>=0&&Object.values(p.hand).every(v=>v>=0)),"negative stock");
+    console.assert(G.deck.length+G.discard.length+G.faceUp.filter(Boolean).length+G.players.reduce((s,p)=>s+cardCount(p),0)===110,"card leak");
+    wins[G.results[0].p.i]++;G.results.forEach(r=>totals[r.p.i]+=r.total)}}
+  finally{SIM=false;G=null}return{wins,avg:totals.map(t=>Math.round(t/n))}}
+
+// ---------- Sound (synthesized with Web Audio, no files) ----------
+let AC=null,muted=false;try{muted=localStorage.getItem("jr-muted")==="1"}catch{}
+function tone(f,t,dur,{type="sine",vol=.12,to}={}){const o=AC.createOscillator(),g=AC.createGain();o.type=type;o.frequency.setValueAtTime(f,t);
+  if(to)o.frequency.exponentialRampToValueAtTime(to,t+dur);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(vol,t+.01);
+  g.gain.exponentialRampToValueAtTime(.001,t+dur);o.connect(g).connect(AC.destination);o.start(t);o.stop(t+dur+.05)}
+function noise(t,dur,{vol=.2,freq=1200,q=1}={}){const b=AC.createBuffer(1,AC.sampleRate*dur|0,AC.sampleRate),d=b.getChannelData(0);
+  for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;const n=AC.createBufferSource(),fl=AC.createBiquadFilter(),g=AC.createGain();
+  n.buffer=b;fl.type="bandpass";fl.frequency.value=freq;fl.Q.value=q;g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(.001,t+dur);
+  n.connect(fl).connect(g).connect(AC.destination);n.start(t)}
+const SFX={
+  card:t=>noise(t,.12,{vol:.3,freq:3200,q:.7}),                                   // card swish
+  wild:t=>[660,880,1320].forEach((f,i)=>tone(f,t+i*.06,.3,{type:"triangle",vol:.08})),
+  claim:(t,n)=>{for(let i=0;i<n;i++){noise(t+i*.14,.08,{vol:.45,freq:450,q:1.4});noise(t+i*.14+.07,.06,{vol:.25,freq:900})} // chugs, one per car
+    tone(740,t+n*.14,.45,{type:"square",vol:.035});tone(932,t+n*.14,.45,{type:"square",vol:.035})},                      // whistle
+  ticket:t=>{noise(t,.2,{vol:.15,freq:5000,q:.5});noise(t+.13,.16,{vol:.12,freq:4200,q:.5})},
+  done:t=>{tone(1047,t,.15,{vol:.1});tone(1568,t+.09,.35,{vol:.1})},             // ticket completed
+  turn:t=>{tone(784,t,.18,{vol:.09});tone(1047,t+.12,.3,{vol:.09})},
+  final:t=>[0,.4,.8].forEach(d=>{tone(523,t+d,.7,{type:"triangle",vol:.1});tone(1046,t+d,.5,{vol:.03})}),
+  win:t=>[523,659,784,1047].forEach((f,i)=>tone(f,t+i*.14,i===3?.8:.35,{type:"triangle",vol:.12})),
+  lose:t=>[392,349,294].forEach((f,i)=>tone(f,t+i*.22,.5,{type:"triangle",vol:.1})),
+  error:t=>tone(220,t,.15,{type:"square",vol:.04,to:150})};
+function sfx(name,arg,delay=0){if(SIM||muted)return;try{AC=AC||new AudioContext();if(AC.state==="suspended")AC.resume();SFX[name](AC.currentTime+.02+delay,arg)}catch{}}
+
+// ---------- Map effects ----------
+function fxAdd(html,ms){if(SIM)return;const g=document.createElementNS("http://www.w3.org/2000/svg","g");g.innerHTML=html;$("fx").appendChild(g);setTimeout(()=>g.remove(),ms)}
+const segLine=(r,cls,col)=>{const[x1,y1]=XY(r.a),[x2,y2]=XY(r.b);return`<line class="${cls}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${col}"/>`};
+function fxClaim(r,o){const[x1,y1]=XY(r.a),[x2,y2]=XY(r.b);
+  fxAdd(segLine(r,"fx-glow",PCOL[o])+`<text class="fx-pts" x="${(x1+x2)/2}" y="${(y1+y2)/2-14}" fill="${PCOL[o]}">+${PTS[r.len]}</text>`,1700)}
+function ownedPath(p,a,b){const prev={[a]:null},q=[a];
+  while(q.length){const c=q.shift();if(c===b)break;for(const r of ADJ[c])if(G.owner[r.id]===p.i){const n=r.a===c?r.b:r.a;if(!(n in prev)){prev[n]=r;q.push(n)}}}
+  const out=[];for(let c=b;prev[c];){const r=prev[c];out.push(r);c=r.a===c?r.b:r.a}return out}
+function fxTicket(t){const T=TICKETS[t];
+  fxAdd(ownedPath(human(),T.a,T.b).map(r=>segLine(r,"fx-path","#f5b301")).join("")+
+    [T.a,T.b].map(c=>{const[x,y]=XY(c);return`<circle class="fx-ring" cx="${x}" cy="${y}" r="10"/><circle class="fx-ring" style="animation-delay:.45s" cx="${x}" cy="${y}" r="10"/>`}).join(""),3500);
+  const cols=[...PCOL,...COLORS.map(c=>HEX[c])],b=document.createElement("div");b.className="banner";
+  b.innerHTML=`<div class="bt">Destination complete!</div><div>${T.a} → ${T.b}</div><b>+${T.pts}</b>`+Array.from({length:40},(_,i)=>
+    `<i style="--x:${(Math.random()*2-1)*240}px;--y:${-40-Math.random()*180}px;--r:${Math.random()*720}deg;background:${cols[i%cols.length]};animation-delay:${Math.random()*.15}s"></i>`).join("");
+  document.body.appendChild(b);setTimeout(()=>b.remove(),3500)}
+
+// ---------- Map zoom (trackpad scroll / pinch / wheel) and drag to pan ----------
+const svgEl=$("map");let VB=[0,0,W,H],panMoved=false;
+function setVB(x,y,w){const h=w*H/W;VB=[Math.min(Math.max(0,x),W-w),Math.min(Math.max(0,y),H-h),w,h];svgEl.setAttribute("viewBox",VB.join(" "))}
+function zoomAt(cx,cy,f){const nw=Math.min(W,Math.max(W/6,VB[2]*f));f=nw/VB[2];
+  const p=new DOMPoint(cx,cy).matrixTransform(svgEl.getScreenCTM().inverse());setVB(p.x-(p.x-VB[0])*f,p.y-(p.y-VB[1])*f,nw)}
+svgEl.addEventListener("wheel",e=>{e.preventDefault();zoomAt(e.clientX,e.clientY,Math.exp(e.deltaY*(e.ctrlKey?.01:.0025)))},{passive:false});
+const ptrs=new Map();let pinch=null,start=null;
+svgEl.addEventListener("pointerdown",e=>{ptrs.set(e.pointerId,[e.clientX,e.clientY]);start=[e.clientX,e.clientY];panMoved=false;pinch=null});
+addEventListener("pointermove",e=>{const prev=ptrs.get(e.pointerId);if(!prev)return;ptrs.set(e.pointerId,[e.clientX,e.clientY]);
+  if(ptrs.size===2){const[a,b]=[...ptrs.values()],d=Math.hypot(a[0]-b[0],a[1]-b[1]);if(pinch)zoomAt((a[0]+b[0])/2,(a[1]+b[1])/2,pinch/d);pinch=d;panMoved=true;return}
+  if(!panMoved&&Math.hypot(e.clientX-start[0],e.clientY-start[1])<5)return;   // small jitter still counts as a click
+  panMoved=true;const s=1/svgEl.getScreenCTM().a;setVB(VB[0]-(e.clientX-prev[0])*s,VB[1]-(e.clientY-prev[1])*s,VB[2])});
+const endPtr=e=>{ptrs.delete(e.pointerId);pinch=null};addEventListener("pointerup",endPtr);addEventListener("pointercancel",endPtr);
+document.querySelector(".zoomctl").onclick=e=>{const z=+e.target.dataset.z;if(isNaN(z))return;
+  if(!z)return setVB(0,0,W);const b=svgEl.getBoundingClientRect();zoomAt(b.left+b.width/2,b.top+b.height/2,z)};
+
+// ---------- Save / resume (browser storage, autosaved on every change) ----------
+function save(){if(SIM||!G)return;try{G.over?localStorage.removeItem("jr-save"):localStorage.setItem("jr-save",JSON.stringify(G))}catch{}}
+function loadSave(){try{const g=JSON.parse(localStorage.getItem("jr-save"));return g&&!g.over?g:null}catch{return null}}
+function resume(g){clearTimeout(timer);G=g;closeOv();render();if(G.pending&&G.pending.p===0)showTickets();else schedule()}
+
+// ---------- UI ----------
+const overlay=$("overlay");
+// Pop-ups float without a backdrop and can be dragged by the grip; the position sticks between pop-ups.
+let dragXY=[0,0];
+function ov(html){overlay.innerHTML=`<div class="modal"><div class="grip">DRAG TO MOVE</div>${html}</div>`;overlay.classList.remove("hidden");
+  const m=overlay.firstChild,place=()=>m.style.translate=`${dragXY[0]}px ${dragXY[1]}px`;place();
+  m.firstChild.onpointerdown=e=>{e.preventDefault();const sx=e.clientX-dragXY[0],sy=e.clientY-dragXY[1];
+    const mv=ev=>{dragXY=[ev.clientX-sx,ev.clientY-sy];place()},up=()=>{removeEventListener("pointermove",mv);removeEventListener("pointerup",up)};
+    addEventListener("pointermove",mv);addEventListener("pointerup",up)}}
+const card=(c,inner)=>`<svg class="ic" viewBox="0 0 64 36"><use href="#${c==="wild"?"loco":"car"}"/></svg>${inner||""}`;
+// destination ticket: mini map with both cities and a dashed line between them
+function ticketHTML(t,cls){const T=TICKETS[t],[x1,y1]=XY(T.a),[x2,y2]=XY(T.b);
+  return`<div class="ticket ${cls}" data-t="${t}"><svg class="mm" viewBox="0 0 ${W} ${H}"><use href="#mini"/>
+    <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#b45309" stroke-width="20" stroke-dasharray="40 26" stroke-linecap="round"/>
+    <circle cx="${x1}" cy="${y1}" r="52" fill="#e5484d" stroke="#fff" stroke-width="16"/><circle cx="${x2}" cy="${y2}" r="52" fill="#e5484d" stroke="#fff" stroke-width="16"/></svg>
+    <span class="tt">${cls.includes("done")?"✓ ":""}${T.a} →<br>${T.b}</span><b>${T.pts}</b></div>`}
+const closeOv=()=>overlay.classList.add("hidden");
+const nope=m=>{sfx("error");toast(m)};
+let toastT;function toast(m){if(SIM)return;const t=$("toast");t.textContent=m;t.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove("show"),1800)}
+function hl(t){document.querySelectorAll(".city").forEach(g=>g.classList.toggle("hl",t!==null&&(g.dataset.city===TICKETS[t].a||g.dataset.city===TICKETS[t].b)))}
+
+function buildMap(){const poly=pts=>pts.map(p=>LL(p).map(v=>v.toFixed(1)).join(",")).join(" ");
+  const SEAS=[["Sea of Japan",[134,40.5]],["East China Sea",[125.5,29.5]],["South China Sea",[113,14]],["Pacific Ocean",[137,22]],["Yellow Sea",[123.4,35.3]],["Bay of Bengal",[89,16]]];
+  const line=pts=>pts.map(p=>LL(p).map(v=>v.toFixed(1)).join(",")).join(" ");
+  const RIVERS=[[[83,25.4],[85,25.6],[87.5,25.2],[88.3,24.3],[89.5,23.5],[90.5,22.4]],[[85,29.3],[90,29.3],[94.5,29.4],[95.5,28],[93,26.6],[90.5,25.5],[89.8,23.5]],[[91.5,33.5],[95,33],[98,31.5],[99.5,28],[100.5,26.5],[102.5,26],[104.5,28.8],[106.5,29.6],[109,30.8],[111.3,30.7],[112.5,29.8],[114.3,30.6],[116,29.8],[117.5,30.6],[118.8,32.1],[120.5,32],[121.8,31.4]],
+    [[96,35],[99,35.5],[101.5,36],[103.8,36.1],[105.5,37.5],[106.5,39.5],[108,41],[110,40.6],[111,40],[110.5,37],[110.4,35],[112,34.8],[114,34.8],[116.5,36],[118.5,37.6]],
+    [[95,33],[97.5,30],[98.8,27],[100,22.5],[100.5,20.3],[102,18.4],[104.8,16.5],[105.8,15.1],[105.9,13.5],[105,11.6],[105.8,10.3],[106.6,9.7]],
+    [[113,53],[118,53.2],[121.5,53.3],[124,52.5],[126.5,50],[127.5,49.6],[130.5,48],[133,48.2],[135.1,48.5],[136.5,50],[138,52],[140.5,53]],
+    [[97.6,26],[96.5,24],[96,22],[95,20],[95.3,17.5],[95.2,16]],[[102,25],[106,24.5],[108.3,22.8],[111,23.4],[113.3,23.1],[113.6,22.4]],
+    [[101.5,24.5],[103.8,22.5],[105.8,21],[106.6,20.3]],[[104.5,52.5],[106,50.5],[106.9,47.9]]];
+  const TIBET=[[78,36],[90,36.5],[95,36],[100,34.5],[102,31],[101,28],[98.5,27.8],[95,28.5],[92,27.8],[88,27.6],[84,28.4],[78,30.5]];
+  const GOBI=[[95,44],[100,42],[105,41.5],[110,42],[114,43.5],[112,45.5],[106,45],[100,45.5],[96,45.5]];
+  const COUNTRIES=[["RUSSIA",[118,49]],["MONGOLIA",[100,45.5]],["CHINA",[97,36]],["JAPAN",[141.5,32]],["PHILIPPINES",[126.5,16]],["MYANMAR",[94,25]],["INDIA",[85.5,24.3]],["INDONESIA",[101,-0.6]]];
+  const grid=[];for(let lon=90;lon<=140;lon+=10){const[x]=LL([lon,0]);grid.push(`<line x1="${x}" y1="0" x2="${x}" y2="${H}"/>`)}
+  for(let lat=0;lat<=40;lat+=10){const[,y]=LL([0,lat]);grid.push(`<line x1="0" y1="${y}" x2="${W}" y2="${y}"/>`)}
+  const[cx,cy]=LL([144,4]),land=LAND.map(p=>`<polygon points="${poly(p)}"/>`).join("");
+  $("map").innerHTML=`<defs>
+    <radialGradient id="sea" cx="70%" cy="70%" r="90%"><stop offset="0" stop-color="#c4ddec"/><stop offset="1" stop-color="#dcebf3"/></radialGradient>
+    <linearGradient id="land" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="832"><stop offset="0" stop-color="#eef0e1"/><stop offset=".45" stop-color="#f7f1e2"/><stop offset="1" stop-color="#e3eed6"/></linearGradient>
+    <pattern id="mtn" width="22" height="16" patternUnits="userSpaceOnUse"><path d="M2 13 L7 5 L12 13 M10 13 L15 7 L20 13" fill="none" stroke="#b9a587" stroke-width="1.2"/></pattern>
+    <pattern id="sand" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="2" cy="3" r="1" fill="#d6bf8f"/><circle cx="7" cy="8" r=".8" fill="#d6bf8f"/></pattern>
+    <filter id="carshadow" x="-20%" y="-30%" width="140%" height="180%"><feDropShadow dx="0" dy="1.2" stdDeviation=".7" flood-color="#000" flood-opacity=".55"/></filter>
+    <filter id="shadow" x="-5%" y="-5%" width="110%" height="110%"><feDropShadow dx="0" dy="2" stdDeviation="2.5" flood-color="#4a6b80" flood-opacity=".25"/></filter>
+    <clipPath id="landclip">${land}</clipPath><symbol id="mini" viewBox="0 0 ${W} ${H}"><rect width="${W}" height="${H}" fill="#d5e7f1"/><g fill="#efe8d6">${land}</g></symbol></defs>
+    <rect width="${W}" height="${H}" fill="url(#sea)"/>
+    <g stroke="#ffffff" stroke-opacity=".6" stroke-width="1" stroke-dasharray="2 5">${grid.join("")}</g>
+    <g fill="none" stroke="#bfd8e8" stroke-width="14" stroke-linejoin="round">${land}</g>
+    <g filter="url(#shadow)" fill="url(#land)" stroke="#c9bda4" stroke-width="1.2" stroke-linejoin="round">${land}</g>
+    <g clip-path="url(#landclip)"><polygon points="${poly(TIBET)}" fill="#e7dcc6" opacity=".9"/><polygon points="${poly(TIBET)}" fill="url(#mtn)" opacity=".8"/>
+      <polygon points="${poly(GOBI)}" fill="#f1e4c3" opacity=".9"/><polygon points="${poly(GOBI)}" fill="url(#sand)"/>
+      <g fill="none" stroke="#8fbfdc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${RIVERS.map(r=>`<polyline points="${line(r)}"/>`).join("")}</g></g>
+    <g font-size="15" font-weight="700" letter-spacing=".35em" fill="#a89c84" opacity=".55" text-anchor="middle">${COUNTRIES.map(([n,p])=>{const[x,y]=LL(p);return`<text x="${x}" y="${y}">${n}</text>`}).join("")}</g>
+    <g transform="translate(${cx} ${cy})" opacity=".75"><circle r="26" fill="#ffffff80" stroke="#7fa3b8"/><path d="M0 -22 L5 0 L0 22 L-5 0Z" fill="#7fa3b8"/><path d="M-22 0 L0 -5 L22 0 L0 5Z" fill="#a9c3d2"/><text y="-30" text-anchor="middle" font-size="11" font-weight="700" fill="#5b7f95">N</text></g>
+    <g class="sea">${SEAS.map(([n,p])=>{const[x,y]=LL(p);return`<text x="${x}" y="${y}" text-anchor="middle">${n}</text>`}).join("")}</g><g id="routes"></g><g id="cities">`+
+    Object.keys(CITIES).map(c=>{const[x,y]=XY(c);return`<g class="city" data-city="${c}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><circle r="7"/><text x="${(LABEL[c]||[0])[0]}" y="${(LABEL[c]||[0,21])[1]}" text-anchor="${(LABEL[c]||[0,0,"middle"])[2]}">${c}</text></g>`}).join("")+`</g><g id="fx"></g>`}
+
+// Unclaimed routes are flat colored slots; claimed ones carry train-car pieces in the owner's color (locomotive first).
+function routeSVG(r){const[x1,y1]=XY(r.a),[x2,y2]=XY(r.b),dx=x2-x1,dy=y2-y1,d=Math.hypot(dx,dy),ux=dx/d,uy=dy/d,ox=-uy*r.off,oy=ux*r.off;
+  const a=Math.atan2(dy,dx)*180/Math.PI,ang=(Math.abs(a)>90?a+180:a).toFixed(1); // keep cars wheels-down
+  const pad=9,seg=(d-2*pad)/r.len,cl=seg-3,o=G.owner[r.id],fresh=G.lastClaim&&G.lastClaim.rid===r.id&&Date.now()-G.lastClaim.at<900;
+  const op=o===null&&!free(r,human())?.22:1,h=Math.min(cl*36/64,15);
+  let s=`<g class="route${o!==null?" owned":""}" data-rid="${r.id}" opacity="${op}"><title>${r.a} – ${r.b}: ${r.len} ${r.color}${o!==null?" (claimed by "+G.players[o].name+")":""}</title>`+
+    `<line x1="${x1+ox}" y1="${y1+oy}" x2="${x2+ox}" y2="${y2+oy}" stroke="transparent" stroke-width="14"/>`;
+  for(let k=0;k<r.len;k++){const t=pad+seg*(k+.5),tr=`translate(${(x1+ox+ux*t).toFixed(1)} ${(y1+oy+uy*t).toFixed(1)}) rotate(${ang})`;
+    const slot=`<rect x="${(-cl/2).toFixed(1)}" y="-4" width="${cl.toFixed(1)}" height="8" rx="2" fill="${HEX[r.color]}" stroke="${r.color==="white"?"#9aa3ae":"#00000033"}" stroke-width="1.2"${o!==null?' opacity=".35"':""}/>`;
+    s+=`<g transform="${tr}">${slot}${o===null?"":`<g class="${fresh?"fresh":""}" style="color:${PCOL[o]};animation-delay:${k*70}ms"><use href="#${k===0?"loco":"car"}" x="${(-cl/2).toFixed(1)}" y="${(-h/2-2).toFixed(1)}" width="${cl.toFixed(1)}" height="${h.toFixed(1)}" preserveAspectRatio="none" filter="url(#carshadow)"/></g>`}</g>`}
+  return s+"</g>"}
+
+function render(){if(SIM||!G)return;const me=human(),myTurn=cur()===me&&!G.over&&!G.pending;
+  $("routes").innerHTML=ROUTES.map(routeSVG).join("");
+  const goals=new Set();me.tickets.forEach(t=>{const T=TICKETS[t];if(!connected(me,T.a,T.b)){goals.add(T.a);goals.add(T.b)}});
+  document.querySelectorAll(".city").forEach(g=>g.classList.toggle("goal",goals.has(g.dataset.city)));
+  $("players").innerHTML=G.players.map(p=>`<div class="player ${p===cur()&&!G.over?"active":""}" style="--pc:${p.color}"><span class="dot"></span>
+    <div class="pname">${p.name}<div class="sub">${p.bot?LEVELS[p.level]+" bot":"You"}</div></div>
+    <div class="stats">${p.trains} trains · ${cardCount(p)} cards<br>${p.tickets.length} tickets · longest ${longest(p)}</div><div class="score">${p.score}</div></div>`).join("");
+  $("market").innerHTML=G.faceUp.map((c,i)=>c?`<div class="tcard c-${c} ${!myTurn||(c==="wild"&&G.drawn)?"disabled":""}" data-i="${i}" title="${c}">${card(c,c==="wild"?`<span class="lbl">WILD</span>`:"")}</div>`:`<div class="tcard empty"></div>`).join("")+
+    `<div class="tcard deck ${!myTurn||!(G.deck.length||G.discard.length)?"disabled":""}" data-i="deck" title="Draw from deck"><small>DECK</small>${G.deck.length+G.discard.length}</div>`;
+  $("ticketBtn").disabled=!myTurn||G.drawn>0||!G.tdeck.length;
+  $("hand").innerHTML=[...COLORS,"wild"].map(c=>`<div class="tcard c-${c} ${me.hand[c]?"":"zero"}" title="${c}">${card(c,`<span class="n">${me.hand[c]}</span>`)}</div>`).join("");
+  $("tickets").innerHTML=me.tickets.map(t=>{const T=TICKETS[t];return ticketHTML(t,connected(me,T.a,T.b)?"done":"")}).join("")||`<span class="sub">None yet</span>`;
+  const stuck=myTurn&&!G.drawn&&!canDrawAny()&&!G.tdeck.length&&!ROUTES.some(r=>routeOk(r,me)&&payOptions(r,me).length);
+  $("status").innerHTML=(G.over?"Game over":G.pending?(G.pending.p===0?"Choose your destination tickets":`${cur().name} is choosing tickets…`):
+    myTurn?(G.drawn?"Draw one more card (not a face-up wild)":"Your turn: draw 2 cards, claim a route, or draw tickets"):`${cur().name} is playing…`)+
+    (stuck?` <button class="ghost" id="passBtn">Pass</button>`:"")+(G.finalLeft>0&&!G.over?`<span class="final">Final round</span>`:"");
+  if(stuck)$("passBtn").onclick=pass;
+  $("log").innerHTML=G.log.map(m=>`<div>${m}</div>`).join("");save()}
+
+function showTickets(){const pd=G.pending,sel=new Set(pd.offered);
+  const draw=()=>{ov(`<h2>${pd.initial?"Choose your destinations":"New destination tickets"}</h2>
+    <p class="muted">Keep at least ${pd.min}. Connect both cities with your own routes by game end to score the points, or lose them.</p>
+    ${pd.offered.map(t=>ticketHTML(t,"big"+(sel.has(t)?" sel":""))).join("")}
+    <button class="primary wide" id="keepBtn" ${sel.size<pd.min?"disabled":""}>Keep ${sel.size}</button>`);
+    overlay.querySelectorAll("[data-t]").forEach(el=>{const t=+el.dataset.t;el.onclick=()=>{sel.has(t)?sel.delete(t):sel.add(t);draw();hl(t)};
+      el.onmouseenter=()=>hl(t);el.onmouseleave=()=>hl(null)});
+    $("keepBtn").onclick=()=>{closeOv();hl(null);const init=pd.initial;keepTickets(pd.offered.filter(t=>sel.has(t)));if(init){log("You go first.");render();schedule()}}};
+  draw()}
+function showEnd(){const R=G.results;
+  ov(`<h2>${R[0].p===human()?"You win!":R[0].p.name+" wins"}</h2>
+    <table><tr><th>Player</th><th>Routes</th><th>Tickets</th><th>Longest</th><th>Total</th></tr>
+    ${R.map(r=>`<tr><td><span class="dot" style="--pc:${r.p.color};display:inline-block;margin-right:6px"></span>${r.p.name}</td><td>${r.routes}</td>
+      <td>+${r.plus} / −${r.minus}</td><td>${r.long}${r.bonus?" (+10)":""}</td><td><b>${r.total}</b></td></tr>`).join("")}</table>
+    <div class="row"><button class="ghost wide" id="viewBtn">View board</button><button class="primary wide" id="againBtn">New game</button></div>`);
+  $("viewBtn").onclick=closeOv;$("againBtn").onclick=showSetup}
+function showSetup(){const sv=loadSave();
+  ov(`<h2>Jade Rails</h2><p class="muted">Build rail lines across East Asia. Collect cards, claim routes, and connect your destination cities before the trains run out.</p>
+    ${sv?`<button class="primary wide" id="resumeBtn" style="margin-bottom:6px">Resume saved game</button>
+    <p class="sub" style="text-align:center;margin:0 0 14px">${sv.players.map(p=>`${p.name} ${p.score}`).join(" · ")} · ${sv.players[0].trains} trains left</p>
+    <h3>Or start a new game</h3>`:""}
+    <div class="row"><label for="nm">Your name</label><input id="nm" value="You" maxlength="12"></div>
+    ${BOT_NAMES.map((n,i)=>`<div class="row"><label for="b${i}">${n}</label><select id="b${i}"><option value="-1">Not playing</option>${LEVELS.map((l,j)=>`<option value="${j}" ${j===(i===2?2:1)&&(i<2)||j===1&&i===2?"selected":""}>${l}</option>`).join("")}</select></div>`).join("")}
+    <button class="primary wide" id="startBtn">Start game</button>`);
+  if(sv)$("resumeBtn").onclick=()=>resume(sv);
+  $("startBtn").onclick=()=>{const bots=BOT_NAMES.map((n,i)=>({name:n,bot:true,level:+$("b"+i).value})).filter(b=>b.level>=0);
+    if(!bots.length)return toast("Pick at least one opponent.");closeOv();newGame([{name:$("nm").value.trim()||"You",bot:false},...bots])}}
+
+$("map").addEventListener("click",e=>{if(panMoved)return;const g=e.target.closest("[data-rid]");if(!g||!G)return;const r=ROUTES[+g.dataset.rid],me=human();
+  if(G.over||cur()!==me||G.pending)return nope("Wait for your turn.");
+  if(G.drawn)return nope("You already drew a card: draw one more.");
+  if(!free(r,me))return nope("That route isn't available.");
+  if(me.trains<r.len)return nope("Not enough trains left.");
+  const o=payOptions(r,me);if(!o.length)return nope(`Need ${r.len} ${r.color==="gray"?"cards of one color":r.color+" cards"} (wilds count).`);
+  if(o.length===1)return claim(r.id,o[0]);
+  ov(`<h2>Pay for ${r.a} – ${r.b}</h2><p class="muted">${r.len} cards, worth ${PTS[r.len]} points.</p><div class="payopts">${o.map(c=>{const n=c==="wild"?0:Math.min(me.hand[c],r.len),w=r.len-n;
+    return`<button data-c="${c}"><span class="chip c-${c}"></span>${[n?n+" "+c:"",w?w+" wild":""].filter(Boolean).join(" + ")}</button>`}).join("")}</div>
+    <button class="ghost wide" id="cancelPay">Cancel</button>`);
+  overlay.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{closeOv();claim(r.id,b.dataset.c)});$("cancelPay").onclick=closeOv});
+$("market").addEventListener("click",e=>{const el=e.target.closest("[data-i]");if(!el||el.classList.contains("disabled"))return;
+  el.dataset.i==="deck"?takeDeck():takeFace(+el.dataset.i)});
+$("ticketBtn").onclick=drawTickets;
+$("newBtn").onclick=showSetup;
+const muteLabel=()=>$("muteBtn").textContent=muted?"🔇":"🔊";muteLabel();
+$("muteBtn").onclick=()=>{muted=!muted;try{localStorage.setItem("jr-muted",muted?"1":"0")}catch{}muteLabel();sfx("card")};
+$("tickets").addEventListener("mouseover",e=>{const t=e.target.closest("[data-t]");hl(t?+t.dataset.t:null)});
+$("tickets").addEventListener("mouseleave",()=>hl(null));
+buildMap();showSetup();
+</script>
+</body>
+</html>
