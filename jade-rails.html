@@ -141,19 +141,22 @@ td:first-child,th:first-child{text-align:left}
 <div id="overlay" class="overlay hidden"></div>
 <div id="toast" class="toast"></div>
 <script>
-// ---------- Data ----------
-const CITIES={"Ulaanbaatar":[106.9,47.9],"Harbin":[126.6,45.8],"Vladivostok":[131.9,43.1],"Sapporo":[141.4,43.1],"Beijing":[116.4,39.9],
+// ---------- Maps ----------
+// Coordinates are [lon, lat]; proj = [lon0, lat0, px per degree lon, px per degree lat] onto the W×H board.
+const W=1024,H=832;
+const MAPS={
+asia:{name:"East Asia",proj:[83,50,16,16],
+cities:{"Ulaanbaatar":[106.9,47.9],"Harbin":[126.6,45.8],"Vladivostok":[131.9,43.1],"Sapporo":[141.4,43.1],"Beijing":[116.4,39.9],
 "Dunhuang":[94.7,40.1],"Xi'an":[108.9,34.3],"Qingdao":[120.4,36.1],"Lhasa":[91.1,29.7],"Kathmandu":[85.3,27.7],"Kolkata":[88.4,22.6],
 "Chengdu":[104.1,30.7],"Kunming":[102.7,25],"Guilin":[110.3,25.3],"Wuhan":[114.3,30.6],"Shanghai":[121.5,31.2],"Hong Kong":[114.2,22.3],
 "Taipei":[121.5,25],"Pyongyang":[125.8,39],"Seoul":[127,37.6],"Busan":[129,35.1],"Hiroshima":[132.5,34.4],"Kyoto":[135.8,35],"Tokyo":[139.7,35.7],
 "Okinawa":[127.7,26.2],"Hanoi":[105.8,21],"Da Nang":[108.2,16.1],"Ho Chi Minh":[106.7,10.8],"Siem Reap":[103.9,13.4],"Bangkok":[100.5,13.8],
 "Chiang Mai":[99,18.8],"Phuket":[98.4,8],"Kuala Lumpur":[101.7,3.1],"Singapore":[103.8,1.35],"Yangon":[96.2,16.8],"Mandalay":[96.1,22],
-"Manila":[121,14.6],"Cebu":[123.9,10.3]};
+"Manila":[121,14.6],"Cebu":[123.9,10.3]},
 // label placement [dx, dy, anchor] for crowded spots; default is centered below
-const LABEL={"Pyongyang":[-11,5,"end"],"Hiroshima":[0,-12,"middle"],"Busan":[-11,5,"end"],"Kuala Lumpur":[-11,5,"end"],"Bangkok":[-11,5,"end"],
-"Yangon":[-11,5,"end"],"Kathmandu":[11,5,"start"],"Kolkata":[-11,5,"end"],"Sapporo":[-11,5,"end"],"Taipei":[11,5,"start"],"Okinawa":[11,5,"start"]};
-const W=1024,H=832,LL=([lon,lat])=>[(lon-83)*16,(50-lat)*16];
-const LAND=[
+labels:{"Pyongyang":[-11,5,"end"],"Hiroshima":[0,-12,"middle"],"Busan":[-11,5,"end"],"Kuala Lumpur":[-11,5,"end"],"Bangkok":[-11,5,"end"],
+"Yangon":[-11,5,"end"],"Kathmandu":[11,5,"start"],"Kolkata":[-11,5,"end"],"Sapporo":[-11,5,"end"],"Taipei":[11,5,"start"],"Okinawa":[11,5,"start"]},
+land:[
   [[78,58],[141,58],[141.5,53],[140.5,50],[140.2,48.3],[138.5,46.5],[135.5,43.8],[133,42.7],[132.3,42.8],[131,42.4],[129.8,41],[128,39.6],[129.4,37],[129.4,35.4],[129.2,35],[128,34.8],[126.5,34.3],[126.3,35.2],[126.6,36.5],[126.6,37.5],[125.5,37.7],[124.8,38.5],[125.1,39.5],[124.3,39.9],[122.2,39.4],[121.2,38.8],[121.6,39.6],[122,40.6],[121,40.8],[119.5,39.9],[118,39.1],[117.7,38.5],[118.5,37.5],[119.2,37.2],[120.7,37.8],[122.6,37.4],[122.3,36.9],[120.8,36.4],[120.6,35.9],[119.4,35],[120.3,34.3],[120.9,32.6],[121.9,31.7],[121.9,30.9],[121.9,30.2],[121.5,28.6],[120.5,27.3],[119.7,26],[119.7,25.5],[118.7,24.6],[117.4,23.6],[116,22.8],[114.4,22.1],[113.5,22.1],[112,21.7],[110.6,21.2],[110.2,20.3],[109.8,21.4],[108.5,21.6],[107,21],[106.6,20.2],[105.8,19],[105.9,18.2],[106.6,17.4],[107.8,16.3],[108.4,16],[108.9,15.2],[109.3,13.4],[109.2,11.6],[108,10.8],[107,10.3],[106.2,9.5],[105.1,8.6],[104.8,9.5],[104.6,10.4],[103.5,10.6],[102.9,11.6],[102.2,12.3],[101,12.7],[100.9,13.4],[100,13.3],[99.9,12],[99.4,10.5],[99.2,9.2],[100.3,8.3],[100.5,7],[101.2,6.8],[102.2,6],[103.4,4.6],[103.5,2.6],[104.3,1.4],[103.5,1.25],[101.3,2.8],[100.4,4.5],[100.3,6.2],[98.7,7.7],[98.2,7.7],[98.5,9],[98.6,10.3],[98.2,12],[97.7,15],[97.6,16.5],[96.8,16.4],[96.3,16.5],[95.3,15.8],[94.3,16],[94.5,18.5],[93.6,19.5],[92.3,20.7],[91.9,22.4],[90.6,22.3],[89.5,21.9],[88,21.6],[86.8,21.2],[86,19.8],[84.5,18.5],[82.3,16.6],[80.3,15.5],[80.1,13],[79.8,10.3],[78,9]],
   [[108.6,19.2],[110,20.1],[111,19.6],[110.5,18.5],[109.5,18.2],[108.7,18.5]],
   [[121.5,25.3],[122,24.5],[121,22],[120.7,22],[120.1,23],[120.6,24.5]],
@@ -169,17 +172,19 @@ const LAND=[
   [[117.2,8.4],[119.6,11.4],[119.4,10.6],[117.5,8.2]],
   [[95.3,5.6],[97.5,5.2],[100.4,2.2],[103.8,-1],[105.8,-5.8],[104.5,-5.9],[101,-2.5],[98.7,1.7],[96.5,3.7]],
   [[109,1.5],[109.6,2],[111,1.6],[113,3.2],[115.5,5.3],[117,7],[119,5.2],[118,4.3],[118.5,1],[117.5,-1],[116.5,-4],[110.2,-3],[109,-1]],
-  [[127.6,26.8],[128.3,26.7],[127.8,26],[127.6,26.1]]];
-const XY=c=>LL(CITIES[c]);
-const COLORS=["red","orange","yellow","green","blue","purple","black","white"];
-const HEX={red:"#e5484d",orange:"#f76b15",yellow:"#f2c200",green:"#30a46c",blue:"#3e7bfa",purple:"#8e4ec6",black:"#2f3136",white:"#f7f7f5",gray:"#b9bfc8"};
-const PTS=[0,1,2,4,7,10,15];
-const PCOL=["#12a594","#d6409f","#a1662f","#5b5bd6"];
-const LEVELS=["Easy","Medium","Hard"];
-const BOT_NAMES=["Mei","Kenji","Arun"];
-
+  [[127.6,26.8],[128.3,26.7],[127.8,26],[127.6,26.1]]],
+seas:[["Sea of Japan",[134,40.5]],["East China Sea",[125.5,29.5]],["South China Sea",[113,14]],["Pacific Ocean",[137,22]],["Yellow Sea",[123.4,35.3]],["Bay of Bengal",[89,16]]],
+rivers:[[[83,25.4],[85,25.6],[87.5,25.2],[88.3,24.3],[89.5,23.5],[90.5,22.4]],[[85,29.3],[90,29.3],[94.5,29.4],[95.5,28],[93,26.6],[90.5,25.5],[89.8,23.5]],[[91.5,33.5],[95,33],[98,31.5],[99.5,28],[100.5,26.5],[102.5,26],[104.5,28.8],[106.5,29.6],[109,30.8],[111.3,30.7],[112.5,29.8],[114.3,30.6],[116,29.8],[117.5,30.6],[118.8,32.1],[120.5,32],[121.8,31.4]],
+    [[96,35],[99,35.5],[101.5,36],[103.8,36.1],[105.5,37.5],[106.5,39.5],[108,41],[110,40.6],[111,40],[110.5,37],[110.4,35],[112,34.8],[114,34.8],[116.5,36],[118.5,37.6]],
+    [[95,33],[97.5,30],[98.8,27],[100,22.5],[100.5,20.3],[102,18.4],[104.8,16.5],[105.8,15.1],[105.9,13.5],[105,11.6],[105.8,10.3],[106.6,9.7]],
+    [[113,53],[118,53.2],[121.5,53.3],[124,52.5],[126.5,50],[127.5,49.6],[130.5,48],[133,48.2],[135.1,48.5],[136.5,50],[138,52],[140.5,53]],
+    [[97.6,26],[96.5,24],[96,22],[95,20],[95.3,17.5],[95.2,16]],[[102,25],[106,24.5],[108.3,22.8],[111,23.4],[113.3,23.1],[113.6,22.4]],
+    [[101.5,24.5],[103.8,22.5],[105.8,21],[106.6,20.3]],[[104.5,52.5],[106,50.5],[106.9,47.9]]],
+mtn:[[[78,36],[90,36.5],[95,36],[100,34.5],[102,31],[101,28],[98.5,27.8],[95,28.5],[92,27.8],[88,27.6],[84,28.4],[78,30.5]]],sand:[[[95,44],[100,42],[105,41.5],[110,42],[114,43.5],[112,45.5],[106,45],[100,45.5],[96,45.5]]],
+countries:[["RUSSIA",[118,49]],["MONGOLIA",[100,45.5]],["CHINA",[97,36]],["JAPAN",[141.5,32]],["PHILIPPINES",[126.5,16]],["MYANMAR",[94,25]],["INDIA",[85.5,24.3]],["INDONESIA",[101,-0.6]]],
+compass:[144,4],grid:[[90,100,110,120,130,140],[0,10,20,30,40]],
 // [cityA, cityB, color(s)] — two colors = double route. Length comes from map distance.
-const ROUTE_DEFS=[["Ulaanbaatar","Harbin","black"],["Ulaanbaatar","Beijing","blue"],["Ulaanbaatar","Dunhuang","yellow"],["Harbin","Vladivostok","orange"],
+routes:[["Ulaanbaatar","Harbin","black"],["Ulaanbaatar","Beijing","blue"],["Ulaanbaatar","Dunhuang","yellow"],["Harbin","Vladivostok","orange"],
 ["Harbin","Beijing","green","red"],["Harbin","Pyongyang","gray"],["Vladivostok","Pyongyang","yellow"],["Vladivostok","Sapporo","white"],
 ["Beijing","Pyongyang","purple"],["Beijing","Qingdao","orange"],["Beijing","Xi'an","yellow"],["Beijing","Wuhan","gray","black"],
 ["Dunhuang","Xi'an","red"],["Dunhuang","Lhasa","purple"],["Dunhuang","Chengdu","gray"],["Lhasa","Kathmandu","blue"],["Lhasa","Chengdu","white"],
@@ -193,12 +198,83 @@ const ROUTE_DEFS=[["Ulaanbaatar","Harbin","black"],["Ulaanbaatar","Beijing","blu
 ["Da Nang","Ho Chi Minh","white"],["Da Nang","Siem Reap","gray"],["Bangkok","Siem Reap","red"],["Siem Reap","Ho Chi Minh","green"],["Bangkok","Phuket","purple"],
 ["Phuket","Kuala Lumpur","black"],["Kuala Lumpur","Singapore","gray","gray"],["Ho Chi Minh","Singapore","orange"],["Ho Chi Minh","Manila","gray"],
 ["Manila","Cebu","yellow"],["Cebu","Singapore","black"],["Pyongyang","Seoul","gray"],["Seoul","Busan","white"],["Busan","Hiroshima","gray"],
-["Hiroshima","Kyoto","orange","purple"],["Kyoto","Tokyo","red","yellow"],["Tokyo","Sapporo","blue"]];
-const ROUTES=[];
-for(const [a,b,...cols] of ROUTE_DEFS){const f=ROUTES.length,[x1,y1]=XY(a),[x2,y2]=XY(b);
-  const len=Math.max(1,Math.min(6,Math.round(Math.hypot(x2-x1,y2-y1)/42)));
-  cols.forEach((color,i)=>ROUTES.push({id:ROUTES.length,a,b,color,len,pair:cols.length>1?f+1-i:-1,off:cols.length>1?(i?5.5:-5.5):0}))}
-const ADJ={};for(const c in CITIES)ADJ[c]=[];ROUTES.forEach(r=>{ADJ[r.a].push(r);ADJ[r.b].push(r)});
+["Hiroshima","Kyoto","orange","purple"],["Kyoto","Tokyo","red","yellow"],["Tokyo","Sapporo","blue"]],
+tickets:[["Beijing","Tokyo"],["Shanghai","Singapore"],["Bangkok","Seoul"],["Hanoi","Beijing"],["Kathmandu","Hong Kong"],
+["Harbin","Hong Kong"],["Ulaanbaatar","Hanoi"],["Sapporo","Shanghai"],["Manila","Beijing"],["Kunming","Taipei"],["Chengdu","Seoul"],["Xi'an","Busan"],
+["Vladivostok","Wuhan"],["Dunhuang","Shanghai"],["Kyoto","Hong Kong"],["Okinawa","Seoul"],["Siem Reap","Chengdu"],
+["Ho Chi Minh","Shanghai"],["Mandalay","Guilin"],["Chiang Mai","Wuhan"],["Da Nang","Qingdao"],["Lhasa","Manila"],["Kathmandu","Singapore"],
+["Ulaanbaatar","Tokyo"],["Pyongyang","Guilin"],["Hiroshima","Sapporo"],["Phuket","Hong Kong"],["Yangon","Taipei"],
+["Cebu","Tokyo"],["Dunhuang","Bangkok"],["Harbin","Kyoto"],["Singapore","Manila"],["Wuhan","Hanoi"]],
+// Long routes: a separate deck. Each player is dealt one at the start; unkept ones leave the game.
+long:[["Singapore","Sapporo"],["Kolkata","Tokyo"],["Kathmandu","Vladivostok"],["Lhasa","Tokyo"],["Kuala Lumpur","Beijing"],["Cebu","Ulaanbaatar"]]},
+germany:{name:"Germany",proj:[1.8,55.8,64,100],
+cities:{"Flensburg":[9.44,54.78],"Kiel":[10.13,54.32],"Stralsund":[13.09,54.31],"Rostock":[12.1,54.09],"Lübeck":[10.69,53.87],"Hamburg":[9.99,53.55],
+"Schwerin":[11.41,53.63],"Emden":[7.21,53.37],"Bremen":[8.8,53.08],"Berlin":[13.4,52.52],"Hanover":[9.73,52.37],"Münster":[7.6,52.05],"Magdeburg":[11.63,52.13],
+"Cottbus":[14.33,51.76],"Dortmund":[7.47,51.51],"Düsseldorf":[6.7,51.3],"Cologne":[7,50.88],"Aachen":[6.08,50.78],"Kassel":[9.48,51.31],"Leipzig":[12.37,51.34],
+"Dresden":[13.74,51.05],"Erfurt":[11.03,50.98],"Koblenz":[7.59,50.36],"Frankfurt":[8.68,50.11],"Würzburg":[9.93,49.79],"Trier":[6.64,49.75],
+"Saarbrücken":[7,49.23],"Heidelberg":[8.69,49.4],"Nuremberg":[11.08,49.45],"Regensburg":[12.1,49.01],"Stuttgart":[9.18,48.78],"Ulm":[9.99,48.4],
+"Augsburg":[10.9,48.37],"Munich":[11.58,48.14],"Passau":[13.43,48.57],"Freiburg":[7.85,47.99],"Konstanz":[9.18,47.66]},
+labels:{"Düsseldorf":[-11,5,"end"],"Aachen":[-11,5,"end"],"Lübeck":[0,-12,"middle"],"Augsburg":[0,-12,"middle"],"Konstanz":[11,5,"start"]},
+land:[
+  [[1,50.9],[2.5,51.1],[3.4,51.4],[3.9,51.75],[4.2,52.1],[4.6,52.45],[4.75,52.95],[5.1,53.3],[6,53.45],[6.9,53.45],[7.1,53.35],[7.1,53.7],[8,53.7],[8.25,53.4],[8.55,53.55],[8.65,53.9],[9,53.88],[8.85,54.1],[8.6,54.35],[8.65,54.9],[8.6,55.4],[8.1,55.6],[8.1,56.6],[8.6,57.2],[9.9,57.6],[10.6,57.75],[10.5,57.2],[10.3,56.6],[10.9,56.4],[10.2,55.95],[9.8,55.6],[9.7,55.2],[9.95,54.95],[9.6,54.85],[10,54.7],[9.95,54.47],[10.2,54.43],[10.9,54.38],[11.1,54.15],[10.85,53.95],[11.4,53.95],[12.1,54.18],[12.5,54.45],[13,54.43],[13.35,54.2],[13.8,54.15],[13.9,54.05],[14.2,53.92],[15.5,54.18],[16.5,54.55],[17.5,54.75],[18.5,54.8],[19,54.6],[19,46],[1,46]],
+  [[9.9,55.5],[10.5,55.6],[10.85,55.3],[10.7,55.05],[10.1,55.08],[9.75,55.3]],
+  [[11.1,55.7],[11.8,56],[12.6,56.05],[12.6,55.65],[12.3,55.3],[12.1,55.1],[11.7,55.2],[11.2,55.2],[11.1,55.45]],
+  [[11,54.8],[11.9,54.95],[12.1,54.75],[11.95,54.55],[11.2,54.65]],[[11,54.52],[11.3,54.5],[11.25,54.4],[11,54.42]],
+  [[13.15,54.25],[13.1,54.55],[13.4,54.68],[13.7,54.55],[13.65,54.3],[13.4,54.25]],
+  [[12.5,56.3],[12.9,55.6],[12.95,55.4],[13.4,55.35],[14.2,55.4],[14.4,55.75],[14.7,56.15],[15.9,56.1],[16.5,56.5],[16.5,57.5],[12.5,57.5]],
+  [[14.7,55.25],[14.85,55.3],[15.15,55.13],[15.05,54.99],[14.7,55.05]]],
+seas:[["North Sea",[5.2,54.6]],["Baltic Sea",[16.3,54.95]]],
+rivers:[[[9.6,47.6],[8.6,47.6],[7.6,47.6],[7.55,48.1],[7.8,48.6],[8.2,49],[8.45,49.5],[8.3,50],[7.9,50],[7.6,50.3],[7.2,50.65],[6.95,50.95],[6.75,51.25],[6.6,51.8],[6.1,51.85],[5.5,51.9],[4.5,51.9]],
+  [[15.5,50.4],[14.3,50.5],[14.2,50.9],[13.7,51.05],[13,51.4],[12,51.8],[11.65,52.15],[11.9,52.6],[11.5,53],[10.6,53.4],[10,53.55],[9.2,53.85],[8.7,53.9]],
+  [[8.5,47.95],[9.5,48.1],[10,48.4],[11,48.75],[12.1,49],[12.9,48.8],[13.45,48.57],[14.3,48.3],[16.4,48.2],[17.8,48]],
+  [[11.6,50],[10.9,49.9],[10.2,50],[9.9,49.8],[9.6,50],[9.2,49.8],[9,50.1],[8.68,50.1],[8.3,50]],
+  [[9.7,51.4],[9.4,51.9],[9.15,52.2],[8.9,52.6],[8.8,53.08],[8.5,53.5]],
+  [[17,51.1],[15.8,51.9],[14.7,52.1],[14.6,52.6],[14.2,53.4],[14.3,53.7]],[[6.4,49.5],[6.64,49.75],[7.1,49.95],[7.59,50.36]]],
+mtn:[[[10.3,51.9],[11,51.85],[11.2,51.65],[10.5,51.6],[10.2,51.75]],[[7.9,48.9],[8.4,48.8],[8.3,48.2],[8.2,47.7],[7.7,47.7],[7.7,48.3]],
+  [[12.4,49.4],[13.6,48.85],[13.9,48.6],[13.4,48.7],[12.4,49.1]],[[12.2,50.3],[13.5,50.7],[14,50.75],[13.8,50.5],[12.3,50.15]],
+  [[5,47],[6,47.4],[7.5,47.3],[9.5,47.55],[10.5,47.35],[12,47.6],[13,47.45],[14,47.6],[16,47.6],[16,47]]],
+sand:[[[9.6,53.2],[10.6,53.2],[10.8,52.8],[10,52.7],[9.5,52.9]]],
+countries:[["DENMARK",[9.2,55.5]],["NETHERLANDS",[5.6,52.7]],["BELGIUM",[4.6,50.5]],["FRANCE",[4.3,48.8]],["POLAND",[16.6,52.4]],["CZECHIA",[15.4,49.9]],["AUSTRIA",[15.2,47.9]]],
+border:[[[7.1,53.35],[7.05,52.6],[6.7,52.5],[6.8,52.2],[6,51.85],[6.2,51.5],[5.9,51.05],[6,50.75],[6.4,50.3],[6.1,50.15],[6.4,49.8],[6.5,49.5],[7,49.15],[7.6,49.05],[8.2,48.97],[7.8,48.5],[7.55,47.6],[8.5,47.6],[9.5,47.55],[9.7,47.55],[10.4,47.3],[11,47.4],[12.2,47.6],[13,47.5],[12.8,48],[13,48.3],[13.8,48.6],[13.6,48.95],[12.5,49.6],[12.1,50.3],[12.5,50.4],[13.5,50.65],[14.3,50.9],[14.8,50.85],[15,51.1],[14.7,51.6],[14.6,52.3],[14.15,52.85],[14.4,53.25],[14.2,53.92]],[[8.65,54.9],[9.45,54.82],[9.6,54.85]]],
+compass:[3.4,54.9],grid:[[4,8,12,16],[48,50,52,54]],
+routes:[["Flensburg","Kiel","blue"],["Flensburg","Hamburg","red"],["Kiel","Hamburg","yellow","black"],["Kiel","Lübeck","gray"],["Lübeck","Hamburg","white"],
+["Lübeck","Schwerin","orange"],["Lübeck","Rostock","purple"],["Schwerin","Rostock","green"],["Rostock","Stralsund","gray"],["Stralsund","Berlin","red"],
+["Rostock","Berlin","black"],["Schwerin","Berlin","yellow"],["Hamburg","Schwerin","gray"],["Hamburg","Bremen","purple","green"],["Hamburg","Hanover","orange","blue"],
+["Emden","Bremen","black"],["Emden","Münster","white"],["Bremen","Hanover","gray"],["Bremen","Münster","yellow"],["Hanover","Münster","red"],
+["Hanover","Magdeburg","green"],["Hanover","Kassel","white"],["Hanover","Berlin","red","white"],["Magdeburg","Berlin","purple"],["Magdeburg","Leipzig","blue"],
+["Berlin","Leipzig","gray","gray"],["Berlin","Cottbus","orange"],["Cottbus","Dresden","green"],["Leipzig","Dresden","yellow","purple"],["Leipzig","Erfurt","black"],
+["Erfurt","Kassel","orange"],["Kassel","Dortmund","purple"],["Kassel","Frankfurt","green"],["Münster","Dortmund","gray"],["Dortmund","Düsseldorf","blue"],
+["Düsseldorf","Cologne","red","green"],["Düsseldorf","Aachen","gray"],["Cologne","Aachen","orange"],["Cologne","Koblenz","black","white"],["Cologne","Frankfurt","yellow"],
+["Aachen","Trier","purple"],["Koblenz","Trier","gray"],["Koblenz","Frankfurt","red"],["Trier","Saarbrücken","green"],["Saarbrücken","Heidelberg","black"],
+["Frankfurt","Heidelberg","purple","orange"],["Frankfurt","Würzburg","blue"],["Erfurt","Würzburg","red"],["Erfurt","Nuremberg","gray"],["Dresden","Nuremberg","white"],
+["Würzburg","Nuremberg","yellow"],["Würzburg","Stuttgart","gray"],["Heidelberg","Stuttgart","white","blue"],["Saarbrücken","Freiburg","orange"],["Stuttgart","Freiburg","red"],
+["Freiburg","Konstanz","yellow"],["Stuttgart","Ulm","green","black"],["Ulm","Konstanz","purple"],["Ulm","Augsburg","gray"],["Augsburg","Munich","blue","red"],
+["Nuremberg","Regensburg","orange"],["Nuremberg","Augsburg","black"],["Regensburg","Munich","white"],["Regensburg","Passau","gray"],["Munich","Passau","yellow"],["Munich","Konstanz","gray"]],
+tickets:[["Berlin","Munich"],["Hamburg","Frankfurt"],["Cologne","Berlin"],["Bremen","Leipzig"],["Hamburg","Cologne"],["Frankfurt","Munich"],["Stuttgart","Dresden"],
+["Kiel","Hanover"],["Rostock","Leipzig"],["Lübeck","Kassel"],["Düsseldorf","Nuremberg"],["Dortmund","Erfurt"],["Münster","Frankfurt"],["Aachen","Heidelberg"],
+["Trier","Würzburg"],["Koblenz","Stuttgart"],["Saarbrücken","Ulm"],["Freiburg","Frankfurt"],["Konstanz","Nuremberg"],["Munich","Dresden"],["Passau","Erfurt"],
+["Regensburg","Berlin"],["Augsburg","Kassel"],["Magdeburg","Würzburg"],["Cottbus","Hamburg"],["Schwerin","Magdeburg"],["Stralsund","Hamburg"],["Emden","Hanover"],
+["Bremen","Cologne"],["Heidelberg","Munich"],["Leipzig","Stuttgart"],["Flensburg","Bremen"]],
+long:[["Flensburg","Munich"],["Emden","Passau"],["Stralsund","Freiburg"],["Aachen","Dresden"],["Kiel","Konstanz"],["Cottbus","Saarbrücken"]]}};
+for(const k in MAPS)MAPS[k].id=k;
+let MAP,CITIES,LABEL,LAND,LL,ROUTES,ADJ,TICKETS;
+const XY=c=>LL(CITIES[c]);
+const COLORS=["red","orange","yellow","green","blue","purple","black","white"];
+const HEX={red:"#e5484d",orange:"#f76b15",yellow:"#f2c200",green:"#30a46c",blue:"#3e7bfa",purple:"#8e4ec6",black:"#2f3136",white:"#f7f7f5",gray:"#b9bfc8"};
+const PTS=[0,1,2,4,7,10,15];
+const PCOL=["#12a594","#d6409f","#a1662f","#5b5bd6"];
+const LEVELS=["Easy","Medium","Hard"];
+const BOT_NAMES=["Mei","Kenji","Arun"];
+
+function useMap(id){if(MAP===MAPS[id])return;MAP=MAPS[id];({cities:CITIES,labels:LABEL,land:LAND}=MAP);
+  const[lo,la,sx,sy]=MAP.proj;LL=([lon,lat])=>[(lon-lo)*sx,(la-lat)*sy];ROUTES=[];
+  for(const [a,b,...cols] of MAP.routes){const f=ROUTES.length,[x1,y1]=XY(a),[x2,y2]=XY(b);
+    const len=Math.max(1,Math.min(6,Math.round(Math.hypot(x2-x1,y2-y1)/42)));
+    cols.forEach((color,i)=>ROUTES.push({id:ROUTES.length,a,b,color,len,pair:cols.length>1?f+1-i:-1,off:cols.length>1?(i?5.5:-5.5):0}))}
+  ADJ={};for(const c in CITIES)ADJ[c]=[];ROUTES.forEach(r=>{ADJ[r.a].push(r);ADJ[r.b].push(r)});
+  // ticket value = shortest possible route in trains
+  TICKETS=[...MAP.tickets.map(d=>[...d,false]),...MAP.long.map(d=>[...d,true])].map(([a,b,long])=>({a,b,long,pts:shortest(a,b,r=>r.len).cost}));
+  buildMap();setVB(0,0,W)}
 
 // ponytail: O(V^2) Dijkstra, fine for 44 cities
 function shortest(a,b,w){const d={},prev={},done=new Set();for(const c in CITIES)d[c]=Infinity;d[a]=0;
@@ -207,16 +283,6 @@ function shortest(a,b,w){const d={},prev={},done=new Set();for(const c in CITIES
   if(d[b]===Infinity)return{cost:Infinity,routes:[]};const routes=[];for(let c=b;c!==a;){const r=prev[c];routes.push(r.id);c=r.a===c?r.b:r.a}
   return{cost:d[b],routes}}
 
-const TICKET_DEFS=[["Beijing","Tokyo"],["Shanghai","Singapore"],["Bangkok","Seoul"],["Hanoi","Beijing"],["Kathmandu","Hong Kong"],
-["Harbin","Hong Kong"],["Ulaanbaatar","Hanoi"],["Sapporo","Shanghai"],["Manila","Beijing"],["Kunming","Taipei"],["Chengdu","Seoul"],["Xi'an","Busan"],
-["Vladivostok","Wuhan"],["Dunhuang","Shanghai"],["Kyoto","Hong Kong"],["Okinawa","Seoul"],["Siem Reap","Chengdu"],
-["Ho Chi Minh","Shanghai"],["Mandalay","Guilin"],["Chiang Mai","Wuhan"],["Da Nang","Qingdao"],["Lhasa","Manila"],["Kathmandu","Singapore"],
-["Ulaanbaatar","Tokyo"],["Pyongyang","Guilin"],["Hiroshima","Sapporo"],["Phuket","Hong Kong"],["Yangon","Taipei"],
-["Cebu","Tokyo"],["Dunhuang","Bangkok"],["Harbin","Kyoto"],["Singapore","Manila"],["Wuhan","Hanoi"]];
-// ticket value = shortest possible route in trains
-// Long routes: a separate deck. Each player is dealt one at the start; unkept ones leave the game.
-const LONG_DEFS=[["Singapore","Sapporo"],["Kolkata","Tokyo"],["Kathmandu","Vladivostok"],["Lhasa","Tokyo"],["Kuala Lumpur","Beijing"],["Cebu","Ulaanbaatar"]];
-const TICKETS=[...TICKET_DEFS.map(d=>[...d,false]),...LONG_DEFS.map(d=>[...d,true])].map(([a,b,long])=>({a,b,long,pts:shortest(a,b,r=>r.len).cost}));
 
 // ---------- Helpers ----------
 const $=id=>document.getElementById(id);
@@ -229,8 +295,8 @@ const human=()=>G.players[0];
 function log(m){G.log.unshift(m);if(G.log.length>80)G.log.pop()}
 
 // ---------- Rules ----------
-function newGame(setup){clearTimeout(timer);
-  G={players:setup.map((s,i)=>({...s,i,color:PCOL[i],hand:Object.fromEntries([...COLORS,"wild"].map(c=>[c,0])),trains:45,tickets:[],score:0})),
+function newGame(setup,map=MAP.id){clearTimeout(timer);useMap(map);
+  G={map,players:setup.map((s,i)=>({...s,i,color:PCOL[i],hand:Object.fromEntries([...COLORS,"wild"].map(c=>[c,0])),trains:45,tickets:[],score:0})),
     deck:shuffle([...COLORS.flatMap(c=>Array(12).fill(c)),...Array(14).fill("wild")]),discard:[],faceUp:Array(5).fill(null),
     tdeck:shuffle(TICKETS.map((_,i)=>i).filter(i=>!TICKETS[i].long)),ldeck:shuffle(TICKETS.map((_,i)=>i).filter(i=>TICKETS[i].long)),owner:ROUTES.map(()=>null),cur:0,drawn:0,finalLeft:-1,passes:0,log:[],over:false,pending:null};
   for(const p of G.players)for(let k=0;k<4;k++)p.hand[drawDeck()]++;
@@ -340,8 +406,8 @@ function botPick(p,want,first){const F=G.faceUp,ok=i=>F[i]&&(first||F[i]!=="wild
   i=[0,1,2,3,4].find(ok);return i!==undefined&&takeFace(i)}
 
 // Self-check: all-bot games must end and score sanely. Run simulate() in the console.
-function simulate(n=30,levels=[0,1,2,2]){SIM=true;const wins=[0,0,0,0],totals=[0,0,0,0];
-  try{for(let g=0;g<n;g++){newGame(levels.map((l,i)=>({name:"B"+i+LEVELS[l],bot:true,level:l})));let k=0;
+function simulate(n=30,levels=[0,1,2,2],map=MAP.id){SIM=true;const wins=[0,0,0,0],totals=[0,0,0,0];
+  try{for(let g=0;g<n;g++){newGame(levels.map((l,i)=>({name:"B"+i+LEVELS[l],bot:true,level:l})),map);let k=0;
     while(!G.over&&k++<5000)botTurn(cur());console.assert(G.over,"game did not end");
     console.assert(G.players.every(p=>p.trains>=0&&Object.values(p.hand).every(v=>v>=0)),"negative stock");
     console.assert(G.players.every(p=>p.tickets.filter(t=>TICKETS[t].long).length<=1)&&!G.tdeck.some(t=>TICKETS[t].long),"long ticket leaked");
@@ -407,7 +473,7 @@ document.querySelector(".zoomctl").onclick=e=>{const z=+e.target.dataset.z;if(is
 // ---------- Save / resume (browser storage, autosaved on every change) ----------
 function save(){if(SIM||!G)return;try{G.over?localStorage.removeItem("jr-save"):localStorage.setItem("jr-save",JSON.stringify(G))}catch{}}
 function loadSave(){try{const g=JSON.parse(localStorage.getItem("jr-save"));return g&&!g.over?g:null}catch{return null}}
-function resume(g){clearTimeout(timer);G=g;closeOv();render();if(G.pending&&G.pending.p===0)showTickets();else schedule()}
+function resume(g){clearTimeout(timer);useMap(g.map||"asia");G=g;closeOv();render();if(G.pending&&G.pending.p===0)showTickets();else schedule()}
 
 // ---------- UI ----------
 const overlay=$("overlay");
@@ -431,20 +497,9 @@ let toastT;function toast(m){if(SIM)return;const t=$("toast");t.textContent=m;t.
 function hl(t){document.querySelectorAll(".city").forEach(g=>{const on=t!==null&&(g.dataset.city===TICKETS[t].a||g.dataset.city===TICKETS[t].b);g.classList.toggle("hl",on);if(on)g.parentNode.appendChild(g)})}
 
 function buildMap(){const poly=pts=>pts.map(p=>LL(p).map(v=>v.toFixed(1)).join(",")).join(" ");
-  const SEAS=[["Sea of Japan",[134,40.5]],["East China Sea",[125.5,29.5]],["South China Sea",[113,14]],["Pacific Ocean",[137,22]],["Yellow Sea",[123.4,35.3]],["Bay of Bengal",[89,16]]];
-  const line=pts=>pts.map(p=>LL(p).map(v=>v.toFixed(1)).join(",")).join(" ");
-  const RIVERS=[[[83,25.4],[85,25.6],[87.5,25.2],[88.3,24.3],[89.5,23.5],[90.5,22.4]],[[85,29.3],[90,29.3],[94.5,29.4],[95.5,28],[93,26.6],[90.5,25.5],[89.8,23.5]],[[91.5,33.5],[95,33],[98,31.5],[99.5,28],[100.5,26.5],[102.5,26],[104.5,28.8],[106.5,29.6],[109,30.8],[111.3,30.7],[112.5,29.8],[114.3,30.6],[116,29.8],[117.5,30.6],[118.8,32.1],[120.5,32],[121.8,31.4]],
-    [[96,35],[99,35.5],[101.5,36],[103.8,36.1],[105.5,37.5],[106.5,39.5],[108,41],[110,40.6],[111,40],[110.5,37],[110.4,35],[112,34.8],[114,34.8],[116.5,36],[118.5,37.6]],
-    [[95,33],[97.5,30],[98.8,27],[100,22.5],[100.5,20.3],[102,18.4],[104.8,16.5],[105.8,15.1],[105.9,13.5],[105,11.6],[105.8,10.3],[106.6,9.7]],
-    [[113,53],[118,53.2],[121.5,53.3],[124,52.5],[126.5,50],[127.5,49.6],[130.5,48],[133,48.2],[135.1,48.5],[136.5,50],[138,52],[140.5,53]],
-    [[97.6,26],[96.5,24],[96,22],[95,20],[95.3,17.5],[95.2,16]],[[102,25],[106,24.5],[108.3,22.8],[111,23.4],[113.3,23.1],[113.6,22.4]],
-    [[101.5,24.5],[103.8,22.5],[105.8,21],[106.6,20.3]],[[104.5,52.5],[106,50.5],[106.9,47.9]]];
-  const TIBET=[[78,36],[90,36.5],[95,36],[100,34.5],[102,31],[101,28],[98.5,27.8],[95,28.5],[92,27.8],[88,27.6],[84,28.4],[78,30.5]];
-  const GOBI=[[95,44],[100,42],[105,41.5],[110,42],[114,43.5],[112,45.5],[106,45],[100,45.5],[96,45.5]];
-  const COUNTRIES=[["RUSSIA",[118,49]],["MONGOLIA",[100,45.5]],["CHINA",[97,36]],["JAPAN",[141.5,32]],["PHILIPPINES",[126.5,16]],["MYANMAR",[94,25]],["INDIA",[85.5,24.3]],["INDONESIA",[101,-0.6]]];
-  const grid=[];for(let lon=90;lon<=140;lon+=10){const[x]=LL([lon,0]);grid.push(`<line x1="${x}" y1="0" x2="${x}" y2="${H}"/>`)}
-  for(let lat=0;lat<=40;lat+=10){const[,y]=LL([0,lat]);grid.push(`<line x1="0" y1="${y}" x2="${W}" y2="${y}"/>`)}
-  const[cx,cy]=LL([144,4]),land=LAND.map(p=>`<polygon points="${poly(p)}"/>`).join("");
+  const M=MAP,grid=[...M.grid[0].map(lon=>{const[x]=LL([lon,0]);return`<line x1="${x}" y1="0" x2="${x}" y2="${H}"/>`}),
+    ...M.grid[1].map(lat=>{const[,y]=LL([0,lat]);return`<line x1="0" y1="${y}" x2="${W}" y2="${y}"/>`})];
+  const[cx,cy]=LL(M.compass),land=LAND.map(p=>`<polygon points="${poly(p)}"/>`).join(""),fill=(ps,f)=>ps.map(p=>f(poly(p))).join("");
   $("map").innerHTML=`<defs>
     <radialGradient id="sea" cx="70%" cy="70%" r="90%"><stop offset="0" stop-color="#c4ddec"/><stop offset="1" stop-color="#dcebf3"/></radialGradient>
     <linearGradient id="land" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="0" y2="832"><stop offset="0" stop-color="#eef0e1"/><stop offset=".45" stop-color="#f7f1e2"/><stop offset="1" stop-color="#e3eed6"/></linearGradient>
@@ -457,12 +512,13 @@ function buildMap(){const poly=pts=>pts.map(p=>LL(p).map(v=>v.toFixed(1)).join("
     <g stroke="#ffffff" stroke-opacity=".6" stroke-width="1" stroke-dasharray="2 5">${grid.join("")}</g>
     <g fill="none" stroke="#bfd8e8" stroke-width="14" stroke-linejoin="round">${land}</g>
     <g filter="url(#shadow)" fill="url(#land)" stroke="#c9bda4" stroke-width="1.2" stroke-linejoin="round">${land}</g>
-    <g clip-path="url(#landclip)"><polygon points="${poly(TIBET)}" fill="#e7dcc6" opacity=".9"/><polygon points="${poly(TIBET)}" fill="url(#mtn)" opacity=".8"/>
-      <polygon points="${poly(GOBI)}" fill="#f1e4c3" opacity=".9"/><polygon points="${poly(GOBI)}" fill="url(#sand)"/>
-      <g fill="none" stroke="#8fbfdc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${RIVERS.map(r=>`<polyline points="${line(r)}"/>`).join("")}</g></g>
-    <g font-size="15" font-weight="700" letter-spacing=".35em" fill="#a89c84" opacity=".55" text-anchor="middle">${COUNTRIES.map(([n,p])=>{const[x,y]=LL(p);return`<text x="${x}" y="${y}">${n}</text>`}).join("")}</g>
+    <g clip-path="url(#landclip)">${fill(M.mtn,p=>`<polygon points="${p}" fill="#e7dcc6" opacity=".9"/><polygon points="${p}" fill="url(#mtn)" opacity=".8"/>`)}
+      ${fill(M.sand,p=>`<polygon points="${p}" fill="#f1e4c3" opacity=".9"/><polygon points="${p}" fill="url(#sand)"/>`)}
+      <g fill="none" stroke="#8fbfdc" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${fill(M.rivers,p=>`<polyline points="${p}"/>`)}</g>
+      <g fill="none" stroke="#a8927a" stroke-width="2" stroke-dasharray="8 4 2 4" opacity=".6">${fill(M.border||[],p=>`<polyline points="${p}"/>`)}</g></g>
+    <g font-size="15" font-weight="700" letter-spacing=".35em" fill="#a89c84" opacity=".55" text-anchor="middle">${M.countries.map(([n,p])=>{const[x,y]=LL(p);return`<text x="${x}" y="${y}">${n}</text>`}).join("")}</g>
     <g transform="translate(${cx} ${cy})" opacity=".75"><circle r="26" fill="#ffffff80" stroke="#7fa3b8"/><path d="M0 -22 L5 0 L0 22 L-5 0Z" fill="#7fa3b8"/><path d="M-22 0 L0 -5 L22 0 L0 5Z" fill="#a9c3d2"/><text y="-30" text-anchor="middle" font-size="11" font-weight="700" fill="#5b7f95">N</text></g>
-    <g class="sea">${SEAS.map(([n,p])=>{const[x,y]=LL(p);return`<text x="${x}" y="${y}" text-anchor="middle">${n}</text>`}).join("")}</g><g id="routes"></g><g id="cities">`+
+    <g class="sea">${M.seas.map(([n,p])=>{const[x,y]=LL(p);return`<text x="${x}" y="${y}" text-anchor="middle">${n}</text>`}).join("")}</g><g id="routes"></g><g id="cities">`+
     Object.keys(CITIES).map(c=>{const[x,y]=XY(c);return`<g class="city" data-city="${c}" transform="translate(${x.toFixed(1)} ${y.toFixed(1)})"><circle r="7"/><text class="lb-${LABEL[c]?(LABEL[c][2]==="middle"?"up":LABEL[c][2]):"below"}" x="${(LABEL[c]||[0])[0]}" y="${(LABEL[c]||[0,21])[1]}" text-anchor="${(LABEL[c]||[0,0,"middle"])[2]}">${c}</text></g>`}).join("")+`</g><g id="fx"></g>`}
 
 // Unclaimed routes are flat colored slots; claimed ones carry train-car pieces in the owner's color (locomotive first).
@@ -513,16 +569,17 @@ function showEnd(){const R=G.results;
     <div class="row"><button class="ghost wide" id="viewBtn">View board</button><button class="primary wide" id="againBtn">New game</button></div>`);
   $("viewBtn").onclick=closeOv;$("againBtn").onclick=showSetup}
 function showSetup(){const sv=loadSave();
-  ov(`<h2>Jade Rails</h2><p class="muted">Build rail lines across East Asia. Collect cards, claim routes, and connect your destination cities before the trains run out.</p>
+  ov(`<h2>Jade Rails</h2><p class="muted">Build rail lines across East Asia or Germany. Collect cards, claim routes, and connect your destination cities before the trains run out.</p>
     ${sv?`<button class="primary wide" id="resumeBtn" style="margin-bottom:6px">Resume saved game</button>
     <p class="sub" style="text-align:center;margin:0 0 14px">${sv.players.map(p=>`${p.name} ${p.score}`).join(" · ")} · ${sv.players[0].trains} trains left</p>
     <h3>Or start a new game</h3>`:""}
+    <div class="row"><label for="mp">Map</label><select id="mp">${Object.values(MAPS).map(m=>`<option value="${m.id}" ${m===MAP?"selected":""}>${m.name}</option>`).join("")}</select></div>
     <div class="row"><label for="nm">Your name</label><input id="nm" value="You" maxlength="12"></div>
     ${BOT_NAMES.map((n,i)=>`<div class="row"><label for="b${i}">${n}</label><select id="b${i}"><option value="-1">Not playing</option>${LEVELS.map((l,j)=>`<option value="${j}" ${j===(i===2?2:1)&&(i<2)||j===1&&i===2?"selected":""}>${l}</option>`).join("")}</select></div>`).join("")}
     <button class="primary wide" id="startBtn">Start game</button>`);
   if(sv)$("resumeBtn").onclick=()=>resume(sv);
   $("startBtn").onclick=()=>{const bots=BOT_NAMES.map((n,i)=>({name:n,bot:true,level:+$("b"+i).value})).filter(b=>b.level>=0);
-    if(!bots.length)return toast("Pick at least one opponent.");closeOv();newGame([{name:$("nm").value.trim()||"You",bot:false},...bots])}}
+    if(!bots.length)return toast("Pick at least one opponent.");closeOv();newGame([{name:$("nm").value.trim()||"You",bot:false},...bots],$("mp").value)}}
 
 $("map").addEventListener("click",e=>{if(panMoved)return;const g=e.target.closest("[data-rid]");if(!g||!G)return;const r=ROUTES[+g.dataset.rid],me=human();
   if(G.over||cur()!==me||G.pending)return nope("Wait for your turn.");
@@ -543,7 +600,7 @@ const muteLabel=()=>$("muteBtn").textContent=muted?"🔇":"🔊";muteLabel();
 $("muteBtn").onclick=()=>{muted=!muted;try{localStorage.setItem("jr-muted",muted?"1":"0")}catch{}muteLabel();sfx("card")};
 $("tickets").addEventListener("mouseover",e=>{const t=e.target.closest("[data-t]");hl(t?+t.dataset.t:null)});
 $("tickets").addEventListener("mouseleave",()=>hl(null));
-buildMap();showSetup();
+useMap(loadSave()?.map||"asia");showSetup();
 </script>
 </body>
 </html>
