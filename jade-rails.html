@@ -208,13 +208,11 @@ tickets:[["Beijing","Tokyo"],["Shanghai","Singapore"],["Bangkok","Seoul"],["Hano
 // Long routes: a separate deck. Each player is dealt one at the start; unkept ones leave the game.
 long:[["Singapore","Sapporo"],["Kolkata","Tokyo"],["Kathmandu","Vladivostok"],["Lhasa","Tokyo"],["Kuala Lumpur","Beijing"],["Cebu","Ulaanbaatar"]]},
 germany:{name:"Germany",proj:[1.8,55.8,64,100],
-cities:{"Flensburg":[9.44,54.78],"Kiel":[10.13,54.32],"Stralsund":[13.09,54.31],"Rostock":[12.1,54.09],"Lübeck":[10.69,53.87],"Hamburg":[9.99,53.55],
-"Schwerin":[11.41,53.63],"Emden":[7.21,53.37],"Bremen":[8.8,53.08],"Berlin":[13.4,52.52],"Hanover":[9.73,52.37],"Münster":[7.6,52.05],"Magdeburg":[11.63,52.13],
-"Cottbus":[14.33,51.76],"Dortmund":[7.47,51.51],"Düsseldorf":[6.7,51.3],"Cologne":[7,50.88],"Aachen":[6.08,50.78],"Kassel":[9.48,51.31],"Leipzig":[12.37,51.34],
-"Dresden":[13.74,51.05],"Erfurt":[11.03,50.98],"Koblenz":[7.59,50.36],"Frankfurt":[8.68,50.11],"Würzburg":[9.93,49.79],"Trier":[6.64,49.75],
-"Saarbrücken":[7,49.23],"Heidelberg":[8.69,49.4],"Nuremberg":[11.08,49.45],"Regensburg":[12.1,49.01],"Stuttgart":[9.18,48.78],"Ulm":[9.99,48.4],
-"Augsburg":[10.9,48.37],"Munich":[11.58,48.14],"Passau":[13.43,48.57],"Freiburg":[7.85,47.99],"Konstanz":[9.18,47.66]},
-labels:{"Düsseldorf":[-11,5,"end"],"Aachen":[-11,5,"end"],"Lübeck":[0,-12,"middle"],"Augsburg":[0,-12,"middle"],"Konstanz":[11,5,"start"]},
+cities:{"Kiel":[10.13,54.32],"Rostock":[12.1,54.09],"Hamburg":[9.99,53.55],"Bremen":[8.8,53.08],"Berlin":[13.4,52.52],"Hanover":[9.73,52.37],
+"Magdeburg":[11.63,52.13],"Dortmund":[7.47,51.51],"Cologne":[6.96,50.94],"Kassel":[9.48,51.31],"Leipzig":[12.37,51.34],"Dresden":[13.74,51.05],"Erfurt":[11.03,50.98],
+"Frankfurt":[8.68,50.11],"Würzburg":[9.93,49.79],"Heidelberg":[8.69,49.4],"Saarbrücken":[7,49.23],"Nuremberg":[11.08,49.45],"Regensburg":[12.1,49.01],
+"Stuttgart":[9.18,48.78],"Ulm":[9.99,48.4],"Munich":[11.58,48.14],"Freiburg":[7.85,47.99],"Konstanz":[9.18,47.66]},
+labels:{"Konstanz":[11,5,"start"]},
 land:[
   [[1,50.9],[2.5,51.1],[3.4,51.4],[3.9,51.75],[4.2,52.1],[4.6,52.45],[4.75,52.95],[5.1,53.3],[6,53.45],[6.9,53.45],[7.1,53.35],[7.1,53.7],[8,53.7],[8.25,53.4],[8.55,53.55],[8.65,53.9],[9,53.88],[8.85,54.1],[8.6,54.35],[8.65,54.9],[8.6,55.4],[8.1,55.6],[8.1,56.6],[8.6,57.2],[9.9,57.6],[10.6,57.75],[10.5,57.2],[10.3,56.6],[10.9,56.4],[10.2,55.95],[9.8,55.6],[9.7,55.2],[9.95,54.95],[9.6,54.85],[10,54.7],[9.95,54.47],[10.2,54.43],[10.9,54.38],[11.1,54.15],[10.85,53.95],[11.4,53.95],[12.1,54.18],[12.5,54.45],[13,54.43],[13.35,54.2],[13.8,54.15],[13.9,54.05],[14.2,53.92],[15.5,54.18],[16.5,54.55],[17.5,54.75],[18.5,54.8],[19,54.6],[19,46],[1,46]],
   [[9.9,55.5],[10.5,55.6],[10.85,55.3],[10.7,55.05],[10.1,55.08],[9.75,55.3]],
@@ -237,25 +235,65 @@ sand:[[[9.6,53.2],[10.6,53.2],[10.8,52.8],[10,52.7],[9.5,52.9]]],
 countries:[["DENMARK",[9.2,55.5]],["NETHERLANDS",[5.6,52.7]],["BELGIUM",[4.6,50.5]],["FRANCE",[4.3,48.8]],["POLAND",[16.6,52.4]],["CZECHIA",[15.4,49.9]],["AUSTRIA",[15.2,47.9]]],
 border:[[[7.1,53.35],[7.05,52.6],[6.7,52.5],[6.8,52.2],[6,51.85],[6.2,51.5],[5.9,51.05],[6,50.75],[6.4,50.3],[6.1,50.15],[6.4,49.8],[6.5,49.5],[7,49.15],[7.6,49.05],[8.2,48.97],[7.8,48.5],[7.55,47.6],[8.5,47.6],[9.5,47.55],[9.7,47.55],[10.4,47.3],[11,47.4],[12.2,47.6],[13,47.5],[12.8,48],[13,48.3],[13.8,48.6],[13.6,48.95],[12.5,49.6],[12.1,50.3],[12.5,50.4],[13.5,50.65],[14.3,50.9],[14.8,50.85],[15,51.1],[14.7,51.6],[14.6,52.3],[14.15,52.85],[14.4,53.25],[14.2,53.92]],[[8.65,54.9],[9.45,54.82],[9.6,54.85]]],
 compass:[3.4,54.9],grid:[[4,8,12,16],[48,50,52,54]],
-routes:[["Flensburg","Kiel","blue"],["Flensburg","Hamburg","red"],["Kiel","Hamburg","yellow","black"],["Kiel","Lübeck","gray"],["Lübeck","Hamburg","white"],
-["Lübeck","Schwerin","orange"],["Lübeck","Rostock","purple"],["Schwerin","Rostock","green"],["Rostock","Stralsund","gray"],["Stralsund","Berlin","red"],
-["Rostock","Berlin","black"],["Schwerin","Berlin","yellow"],["Hamburg","Schwerin","gray"],["Hamburg","Bremen","purple","green"],["Hamburg","Hanover","orange","blue"],
-["Emden","Bremen","black"],["Emden","Münster","white"],["Bremen","Hanover","gray"],["Bremen","Münster","yellow"],["Hanover","Münster","red"],
-["Hanover","Magdeburg","green"],["Hanover","Kassel","white"],["Hanover","Berlin","red","white"],["Magdeburg","Berlin","purple"],["Magdeburg","Leipzig","blue"],
-["Berlin","Leipzig","gray","gray"],["Berlin","Cottbus","orange"],["Cottbus","Dresden","green"],["Leipzig","Dresden","yellow","purple"],["Leipzig","Erfurt","black"],
-["Erfurt","Kassel","orange"],["Kassel","Dortmund","purple"],["Kassel","Frankfurt","green"],["Münster","Dortmund","gray"],["Dortmund","Düsseldorf","blue"],
-["Düsseldorf","Cologne","red","green"],["Düsseldorf","Aachen","gray"],["Cologne","Aachen","orange"],["Cologne","Koblenz","black","white"],["Cologne","Frankfurt","yellow"],
-["Aachen","Trier","purple"],["Koblenz","Trier","gray"],["Koblenz","Frankfurt","red"],["Trier","Saarbrücken","green"],["Saarbrücken","Heidelberg","black"],
-["Frankfurt","Heidelberg","purple","orange"],["Frankfurt","Würzburg","blue"],["Erfurt","Würzburg","red"],["Erfurt","Nuremberg","gray"],["Dresden","Nuremberg","white"],
-["Würzburg","Nuremberg","yellow"],["Würzburg","Stuttgart","gray"],["Heidelberg","Stuttgart","white","blue"],["Saarbrücken","Freiburg","orange"],["Stuttgart","Freiburg","red"],
-["Freiburg","Konstanz","yellow"],["Stuttgart","Ulm","green","black"],["Ulm","Konstanz","purple"],["Ulm","Augsburg","gray"],["Augsburg","Munich","blue","red"],
-["Nuremberg","Regensburg","orange"],["Nuremberg","Augsburg","black"],["Regensburg","Munich","white"],["Regensburg","Passau","gray"],["Munich","Passau","yellow"],["Munich","Konstanz","gray"]],
+routes:[["Kiel","Hamburg","yellow","black"],["Kiel","Rostock","gray"],["Hamburg","Rostock","purple"],["Rostock","Berlin","black"],["Hamburg","Berlin","green"],
+["Hamburg","Bremen","orange","blue"],["Hamburg","Hanover","red","white"],["Bremen","Hanover","gray"],["Bremen","Dortmund","yellow"],["Hanover","Dortmund","red"],
+["Hanover","Magdeburg","green"],["Hanover","Kassel","white"],["Magdeburg","Berlin","purple","blue"],["Magdeburg","Leipzig","orange"],["Berlin","Leipzig","gray","gray"],
+["Berlin","Dresden","orange"],["Leipzig","Dresden","yellow","purple"],["Leipzig","Erfurt","black"],["Erfurt","Kassel","orange"],["Kassel","Dortmund","purple"],
+["Kassel","Frankfurt","green"],["Dortmund","Cologne","blue","red"],["Cologne","Frankfurt","yellow","black"],["Cologne","Saarbrücken","gray"],
+["Saarbrücken","Heidelberg","black"],["Saarbrücken","Freiburg","orange"],["Frankfurt","Heidelberg","purple","orange"],["Frankfurt","Würzburg","blue"],
+["Erfurt","Würzburg","red"],["Erfurt","Nuremberg","gray"],["Dresden","Nuremberg","white"],["Würzburg","Nuremberg","yellow"],["Würzburg","Stuttgart","gray"],
+["Heidelberg","Stuttgart","white","blue"],["Stuttgart","Freiburg","red"],["Freiburg","Konstanz","yellow"],["Stuttgart","Ulm","green","black"],["Ulm","Konstanz","purple"],
+["Ulm","Munich","gray"],["Nuremberg","Regensburg","orange"],["Nuremberg","Munich","red","blue"],["Regensburg","Munich","white"],["Munich","Konstanz","gray"]],
 tickets:[["Berlin","Munich"],["Hamburg","Frankfurt"],["Cologne","Berlin"],["Bremen","Leipzig"],["Hamburg","Cologne"],["Frankfurt","Munich"],["Stuttgart","Dresden"],
-["Kiel","Hanover"],["Rostock","Leipzig"],["Lübeck","Kassel"],["Düsseldorf","Nuremberg"],["Dortmund","Erfurt"],["Münster","Frankfurt"],["Aachen","Heidelberg"],
-["Trier","Würzburg"],["Koblenz","Stuttgart"],["Saarbrücken","Ulm"],["Freiburg","Frankfurt"],["Konstanz","Nuremberg"],["Munich","Dresden"],["Passau","Erfurt"],
-["Regensburg","Berlin"],["Augsburg","Kassel"],["Magdeburg","Würzburg"],["Cottbus","Hamburg"],["Schwerin","Magdeburg"],["Stralsund","Hamburg"],["Emden","Hanover"],
-["Bremen","Cologne"],["Heidelberg","Munich"],["Leipzig","Stuttgart"],["Flensburg","Bremen"]],
-long:[["Flensburg","Munich"],["Emden","Passau"],["Stralsund","Freiburg"],["Aachen","Dresden"],["Kiel","Konstanz"],["Cottbus","Saarbrücken"]]}};
+["Kiel","Hanover"],["Rostock","Leipzig"],["Dortmund","Erfurt"],["Cologne","Nuremberg"],["Saarbrücken","Ulm"],["Freiburg","Frankfurt"],["Konstanz","Nuremberg"],
+["Munich","Dresden"],["Regensburg","Berlin"],["Magdeburg","Würzburg"],["Kiel","Magdeburg"],["Hamburg","Dresden"],["Bremen","Cologne"],["Heidelberg","Munich"],
+["Leipzig","Stuttgart"],["Kassel","Ulm"],["Hanover","Frankfurt"],["Dortmund","Saarbrücken"],["Erfurt","Regensburg"],["Rostock","Kassel"],["Würzburg","Konstanz"]],
+long:[["Kiel","Munich"],["Rostock","Freiburg"],["Hamburg","Konstanz"],["Cologne","Dresden"],["Berlin","Saarbrücken"],["Bremen","Regensburg"]]},
+france:{name:"France",proj:[-5.6,51.3,63,91],
+cities:{"Calais":[1.86,50.95],"Lille":[3.06,50.63],"Amiens":[2.3,49.89],"Rouen":[1.1,49.44],"Caen":[-0.37,49.18],"Cherbourg":[-1.62,49.64],"Paris":[2.35,48.86],
+"Reims":[4.03,49.26],"Metz":[6.18,49.12],"Strasbourg":[7.75,48.58],"Mulhouse":[7.34,47.75],"Brest":[-4.49,48.39],"Rennes":[-1.68,48.11],"Le Mans":[0.2,48],
+"Orléans":[1.91,47.9],"Tours":[0.69,47.39],"Nantes":[-1.55,47.22],"Troyes":[4.07,48.3],"Dijon":[5.04,47.32],"Besançon":[6.02,47.24],"Bourges":[2.4,47.08],
+"Poitiers":[0.34,46.58],"La Rochelle":[-1.15,46.16],"Limoges":[1.26,45.83],"Clermont-Ferrand":[3.08,45.78],"Lyon":[4.84,45.76],"Grenoble":[5.72,45.19],
+"Chamonix":[6.87,45.92],"Bordeaux":[-0.58,44.84],"Rodez":[2.57,44.35],"Biarritz":[-1.56,43.48],"Lourdes":[-0.05,43.1],"Toulouse":[1.44,43.6],
+"Carcassonne":[2.35,43.21],"Perpignan":[2.9,42.7],"Montpellier":[3.88,43.61],"Avignon":[4.81,43.95],"Marseille":[5.37,43.3],"Nice":[7.26,43.7]},
+labels:{"Toulouse":[-11,5,"end"]},
+land:[
+  [[12,53],[5,53],[4.5,52.4],[3.6,51.4],[2.5,51.1],[1.6,50.95],[1.6,50.2],[1.4,50.1],[0.2,49.7],[0.1,49.45],[-0.2,49.3],[-1.1,49.4],[-1.3,49.7],[-1.9,49.72],[-1.95,49.4],[-1.6,48.8],[-1.4,48.65],[-2,48.65],[-2.7,48.5],[-3.1,48.85],[-4,48.7],[-4.75,48.5],[-4.4,48.3],[-4.6,48.1],[-4.3,47.8],[-3.5,47.75],[-2.8,47.5],[-2.2,47.2],[-2,47],[-2.1,46.8],[-1.8,46.5],[-1.2,46.2],[-1.1,45.6],[-1.25,45.5],[-1.2,44.6],[-1.4,44],[-1.5,43.4],[-1.8,43.35],[-3.5,43.45],[-5,43.55],[-6,43.6],[-6,41],[2,41],[3.2,41.9],[3.2,42.3],[3.05,42.55],[3,43],[3.5,43.3],[4.1,43.55],[4.8,43.35],[5.3,43.2],[5.9,43.1],[6.6,43.15],[7,43.5],[7.5,43.78],[8.2,43.9],[8.8,44.4],[9.8,44.1],[10.3,43.6],[10.6,42.9],[12,42]],
+  [[9.4,43],[9.5,42.6],[9.55,42.1],[9.2,41.4],[8.6,41.7],[8.6,42.3],[8.7,42.6],[9.3,42.7]],
+  [[-6,50],[-5.7,50.05],[-5,50],[-4.2,50.35],[-3.5,50.6],[-2,50.6],[-1,50.75],[0.2,50.75],[1,50.95],[1.4,51.15],[1.4,51.4],[0.8,51.5],[1.5,52],[2,53],[-6,53]]],
+seas:[["English Channel",[-3.4,49.55]],["Atlantic Ocean",[-4.2,47.2]],["Bay of Biscay",[-3.3,45.2]],["Mediterranean Sea",[5.5,42.5]]],
+rivers:[[[4.7,47.8],[4.1,48.3],[3.4,48.45],[2.8,48.5],[2.35,48.86],[2,49],[1.5,49.1],[1.1,49.4],[0.4,49.45],[0.1,49.45]],
+  [[4,44.9],[4.1,45.6],[3.9,46.4],[3.2,46.8],[2.9,47.4],[2.4,47.75],[1.91,47.9],[1.3,47.6],[0.69,47.39],[0,47.25],[-0.55,47.4],[-1.55,47.22],[-2.2,47.28]],
+  [[6.2,46.2],[5.5,45.9],[4.84,45.76],[4.8,45.2],[4.7,44.6],[4.81,43.95],[4.6,43.4]],[[6,48],[5,47.1],[4.85,46.4],[4.84,45.76]],
+  [[0.6,42.8],[1,43.2],[1.44,43.6],[0.6,44.2],[-0.1,44.5],[-0.58,44.84],[-0.8,45.3],[-1.1,45.6]],[[7.55,47.6],[7.6,48.3],[8,48.8],[8.2,49],[8.4,49.5],[8.3,50],[7.6,50.3]]],
+mtn:[[[6.1,46.6],[7.5,46.3],[8.5,46.4],[10.5,46.5],[10.7,45.8],[7.6,45.2],[7.4,44.3],[7.3,43.95],[6.6,43.9],[6,44.5],[5.6,45.2],[6,46.1]],
+  [[-1.8,43.2],[-0.5,43],[0.8,42.9],[2,42.7],[3.1,42.5],[2.8,42.2],[0.5,42.3],[-1.5,42.7]],[[2.4,45.9],[3.6,45.8],[4.2,45.2],[3.9,44.3],[2.8,44.2],[2.3,44.9]],
+  [[6.8,48.6],[7.3,48.5],[7.1,47.8],[6.8,47.9]],[[5.6,46.3],[6.1,46.2],[6.9,47.3],[6.4,47.4]]],
+sand:[[[-1.2,44.6],[-0.5,44.5],[-0.3,43.9],[-1.4,43.8]]],
+countries:[["ENGLAND",[-2,50.9]],["BELGIUM",[4.6,50.6]],["GERMANY",[8.9,49.6]],["SWITZERLAND",[8.2,46.8]],["ITALY",[8.9,45.3]],["SPAIN",[-2.5,42.6]]],
+border:[[[2.55,51.09],[3.2,50.75],[4.2,50.3],[4.8,50.15],[4.85,49.8],[5.5,49.5],[6.1,49.45],[6.7,49.15],[7.6,49.05],[8.2,48.97],[7.8,48.5],[7.55,47.6],[7,47.45],[6.9,47.3],[6.1,46.6],[6.1,46.15],[6.8,46.4],[6.8,45.8],[7.1,45.3],[6.6,45.1],[7,44.3],[7.6,44.15],[7.5,43.78]],
+  [[-1.8,43.35],[-1.4,43.05],[-0.7,42.8],[0.7,42.85],[1.4,42.6],[2.6,42.35],[3.2,42.43]]],
+compass:[-4.2,43.7],grid:[[-4,0,4,8],[43,45,47,49,51]],
+routes:[["Calais","Lille","yellow"],["Calais","Amiens","gray"],["Lille","Amiens","blue"],["Lille","Reims","orange"],["Amiens","Rouen","green"],
+["Amiens","Paris","black","red"],["Rouen","Paris","purple","white"],["Rouen","Caen","gray"],["Caen","Cherbourg","red"],["Caen","Rennes","yellow"],["Caen","Le Mans","blue"],
+["Brest","Rennes","gray"],["Brest","Nantes","purple"],["Rennes","Nantes","green"],["Rennes","Le Mans","orange"],["Nantes","La Rochelle","black"],["Nantes","Poitiers","gray"],
+["Le Mans","Paris","yellow","green"],["Le Mans","Tours","red"],["Paris","Orléans","blue","orange"],["Paris","Reims","white"],["Paris","Troyes","gray"],
+["Reims","Metz","purple"],["Reims","Troyes","yellow"],["Metz","Strasbourg","green"],["Strasbourg","Mulhouse","black"],["Mulhouse","Besançon","orange"],
+["Troyes","Dijon","red"],["Dijon","Besançon","gray"],["Dijon","Lyon","white","purple"],["Besançon","Chamonix","blue"],["Orléans","Tours","gray"],
+["Orléans","Bourges","black"],["Tours","Poitiers","green"],["Poitiers","La Rochelle","purple"],["Poitiers","Limoges","orange"],["La Rochelle","Bordeaux","red"],
+["Bordeaux","Limoges","yellow"],["Bourges","Clermont-Ferrand","blue"],["Bourges","Dijon","green"],["Limoges","Clermont-Ferrand","gray"],["Clermont-Ferrand","Lyon","black"],
+["Lyon","Grenoble","red","yellow"],["Lyon","Chamonix","orange"],["Grenoble","Chamonix","white"],["Grenoble","Avignon","gray"],["Grenoble","Nice","purple"],
+["Lyon","Avignon","green"],["Clermont-Ferrand","Rodez","white"],["Limoges","Toulouse","black"],["Bordeaux","Toulouse","blue","white"],["Bordeaux","Biarritz","green"],
+["Biarritz","Lourdes","orange"],["Lourdes","Toulouse","yellow"],["Toulouse","Rodez","red"],["Toulouse","Carcassonne","purple"],["Carcassonne","Perpignan","green"],
+["Carcassonne","Montpellier","black"],["Perpignan","Montpellier","gray"],["Rodez","Montpellier","orange"],["Montpellier","Avignon","blue"],["Avignon","Marseille","white"],
+["Marseille","Nice","red","blue"]],
+tickets:[["Paris","Marseille"],["Lille","Lyon"],["Brest","Paris"],["Bordeaux","Paris"],["Toulouse","Lyon"],["Calais","Dijon"],["Rouen","Bordeaux"],["Cherbourg","Tours"],
+["Reims","Lyon"],["Metz","Besançon"],["Strasbourg","Dijon"],["Rennes","Orléans"],["Le Mans","Limoges"],["Caen","Nantes"],["Amiens","Troyes"],["Bourges","Montpellier"],
+["Clermont-Ferrand","Marseille"],["Limoges","Lourdes"],["La Rochelle","Toulouse"],["Biarritz","Carcassonne"],["Perpignan","Avignon"],["Grenoble","Montpellier"],
+["Chamonix","Dijon"],["Mulhouse","Lyon"],["Rodez","Bordeaux"],["Poitiers","Clermont-Ferrand"],["Tours","Dijon"],["Orléans","Lille"],["Paris","Toulouse"],["Lyon","Nice"],
+["Nantes","Bordeaux"],["Paris","Strasbourg"]],
+long:[["Brest","Nice"],["Calais","Perpignan"],["Strasbourg","Biarritz"],["Cherbourg","Marseille"],["Nantes","Chamonix"],["Metz","Lourdes"]]}
+};
 for(const k in MAPS)MAPS[k].id=k;
 let MAP,CITIES,LABEL,LAND,LL,ROUTES,ADJ,TICKETS;
 const XY=c=>LL(CITIES[c]);
@@ -289,9 +327,9 @@ const $=id=>document.getElementById(id);
 const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
 const pick=a=>a[Math.random()*a.length|0];
 const cardCount=p=>Object.values(p.hand).reduce((a,b)=>a+b,0);
-let G=null,SIM=false,timer=null;
+let G=null,SIM=false,timer=null,ME=0,NET=null; // ME = this browser's seat; NET = online room (see Online)
 const cur=()=>G.players[G.cur];
-const human=()=>G.players[0];
+const human=()=>G.players[ME];
 function log(m){G.log.unshift(m);if(G.log.length>80)G.log.pop()}
 
 // ---------- Rules ----------
@@ -301,11 +339,12 @@ function newGame(setup,map=MAP.id){clearTimeout(timer);useMap(map);
     tdeck:shuffle(TICKETS.map((_,i)=>i).filter(i=>!TICKETS[i].long)),ldeck:shuffle(TICKETS.map((_,i)=>i).filter(i=>TICKETS[i].long)),owner:ROUTES.map(()=>null),cur:0,drawn:0,finalLeft:-1,passes:0,log:[],over:false,pending:null};
   for(const p of G.players)for(let k=0;k<4;k++)p.hand[drawDeck()]++;
   refill();
-  for(const p of G.players){const offered=[G.ldeck.pop(),...G.tdeck.splice(-2)]; // 1 long + 2 regular
+  const q=[];for(const p of G.players){const offered=[G.ldeck.pop(),...G.tdeck.splice(-2)]; // 1 long + 2 regular
     if(p.bot){p.tickets=chooseTickets(p,offered,2);G.tdeck.unshift(...offered.filter(t=>!p.tickets.includes(t)&&!TICKETS[t].long))}
-    else G.pending={p:p.i,offered,min:2,initial:true}}
+    else q.push({p:p.i,offered,min:2,initial:true})}
+  G.pendQ=q;G.pending=q.shift()||null; // humans pick their starting tickets one after another
   log("New game. Everyone picks destination tickets.");
-  render();if(G.pending&&!SIM)showTickets();else schedule()}
+  render();if(G.pending?.p===ME&&!SIM)showTickets();else schedule()}
 
 function drawDeck(){if(!G.deck.length){G.deck=shuffle(G.discard);G.discard=[]}return G.deck.pop()||null}
 function refill(){for(let t=0;t<4;t++){for(let i=0;i<5;i++)if(!G.faceUp[i])G.faceUp[i]=drawDeck();
@@ -316,7 +355,7 @@ const canDrawAny=second=>G.deck.length||G.discard.length||G.faceUp.some(c=>c&&(!
 function takeFace(i){const c=G.faceUp[i];if(!c||(c==="wild"&&G.drawn))return false;const p=cur();
   p.hand[c]++;G.faceUp[i]=null;refill();sfx(c==="wild"?"wild":"card");log(`${p.name} took a face-up ${c==="wild"?"wild":c} card.`);afterDraw(c==="wild");return true}
 function takeDeck(){const c=drawDeck();if(!c)return false;const p=cur();p.hand[c]++;sfx("card");
-  if(p.bot)log(`${p.name} drew from the deck.`);else{log(`You drew a ${c} card from the deck.`);toast(`You drew: ${c}`)}
+  log(p.bot||NET?`${p.name} drew from the deck.`:`You drew a ${c} card from the deck.`);if(p===human())toast(`You drew: ${c}`)
   afterDraw(false);return true}
 function afterDraw(wild){G.passes=0;G.drawn++;if(wild||G.drawn>=2||!canDrawAny(true))endTurn();else render()}
 
@@ -325,29 +364,31 @@ function free(r,p){if(G.owner[r.id]!==null)return false;if(r.pair<0)return true;
 const routeOk=(r,p)=>free(r,p)&&p.trains>=r.len;
 function payOptions(r,p){const o=(r.color==="gray"?COLORS:[r.color]).filter(c=>p.hand[c]&&p.hand[c]+p.hand.wild>=r.len);
   if(p.hand.wild>=r.len)o.push("wild");return o}
-function claim(rid,c){const r=ROUTES[rid],p=cur();if(G.drawn||!routeOk(r,p)||!payOptions(r,p).includes(c))return false;
+function claim(rid,c){const r=ROUTES[rid],p=cur();if(!r||G.drawn||!routeOk(r,p)||!payOptions(r,p).includes(c))return false;
   const n=c==="wild"?0:Math.min(p.hand[c],r.len);p.hand[c]-=n;p.hand.wild-=r.len-n;
   G.discard.push(...Array(n).fill(c),...Array(r.len-n).fill("wild"));
   const before=p.tickets.filter(t=>connected(p,TICKETS[t].a,TICKETS[t].b));G.owner[rid]=p.i;G.lastClaim={rid,at:Date.now()};p.trains-=r.len;p.score+=PTS[r.len];G.passes=0;
   sfx("claim",r.len);fxClaim(r,p.i);
-  if(!p.bot)p.tickets.filter(t=>!before.includes(t)&&connected(p,TICKETS[t].a,TICKETS[t].b)).forEach((t,i)=>{
+  if(p===human())p.tickets.filter(t=>!before.includes(t)&&connected(p,TICKETS[t].a,TICKETS[t].b)).forEach((t,i)=>{
     sfx("done",0,r.len*.14+.5+i*1.4);if(!SIM)setTimeout(()=>fxTicket(t),r.len*140+500+i*1400)});
   log(`${p.name} claimed ${r.a} – ${r.b} (+${PTS[r.len]}).`);endTurn();return true}
 
 function drawTickets(){if(G.drawn||G.pending||!G.tdeck.length)return false;const p=cur();
   G.pending={p:p.i,offered:G.tdeck.splice(-3).reverse(),min:1};log(`${p.name} drew destination tickets.`);sfx("ticket");
-  if(p.bot)keepTickets(chooseTickets(p,G.pending.offered,1));else{render();showTickets()}return true}
+  if(p.bot)keepTickets(chooseTickets(p,G.pending.offered,1));else{render();if(p===human())showTickets()}return true}
 function keepTickets(keep){const pd=G.pending,p=G.players[pd.p];G.pending=null;p.tickets.push(...keep);
-  G.tdeck.unshift(...pd.offered.filter(t=>!keep.includes(t)&&!TICKETS[t].long));if(pd.initial)return;
+  G.tdeck.unshift(...pd.offered.filter(t=>!keep.includes(t)&&!TICKETS[t].long));
+  if(pd.initial){G.pending=G.pendQ?.shift()||null;if(!G.pending)log(G.players[0]===human()&&!NET?"You go first.":`${G.players[0].name} goes first.`);
+    render();if(G.pending?.p===ME)showTickets();else schedule();return}
   log(`${p.name} kept ${keep.length} ticket${keep.length>1?"s":""}.`);G.passes=0;endTurn()}
 
 function endTurn(){const p=cur();G.drawn=0;
   if(G.finalLeft>0){if(--G.finalLeft===0)return finish()}
   else if(G.finalLeft<0&&p.trains<=2){G.finalLeft=G.players.length;log(`${p.name} is down to ${p.trains} trains: everyone gets one final turn!`);sfx("final")}
   if(G.passes>=G.players.length*2)return finish(); // nobody can move
-  G.cur=(G.cur+1)%G.players.length;if(!cur().bot)sfx("turn",0,.6);render();schedule()}
+  G.cur=(G.cur+1)%G.players.length;if(cur()===human())sfx("turn",0,.6);render();schedule()}
 function pass(){G.passes++;log(`${cur().name} passed.`);endTurn()}
-function schedule(){if(SIM||G.over||G.pending)return;clearTimeout(timer);if(cur().bot)timer=setTimeout(()=>botTurn(cur()),850)}
+function schedule(){if(SIM||G.over||G.pending||NET&&!NET.host)return;clearTimeout(timer);if(cur().bot)timer=setTimeout(()=>botTurn(cur()),850)}
 
 function connected(p,a,b){const seen=new Set([a]),q=[a];while(q.length){const c=q.pop();if(c===b)return true;
   for(const r of ADJ[c])if(G.owner[r.id]===p.i){const n=r.a===c?r.b:r.a;if(!seen.has(n)){seen.add(n);q.push(n)}}}return false}
@@ -471,9 +512,69 @@ document.querySelector(".zoomctl").onclick=e=>{const z=+e.target.dataset.z;if(is
   if(!z)return setVB(0,0,W);const b=svgEl.getBoundingClientRect();zoomAt(b.left+b.width/2,b.top+b.height/2,z)};
 
 // ---------- Save / resume (browser storage, autosaved on every change) ----------
-function save(){if(SIM||!G)return;try{G.over?localStorage.removeItem("jr-save"):localStorage.setItem("jr-save",JSON.stringify(G))}catch{}}
+function save(){if(SIM||!G||NET)return;try{G.over?localStorage.removeItem("jr-save"):localStorage.setItem("jr-save",JSON.stringify(G))}catch{}}
 function loadSave(){try{const g=JSON.parse(localStorage.getItem("jr-save"));return g&&!g.over?g:null}catch{return null}}
 function resume(g){clearTimeout(timer);useMap(g.map||"asia");G=g;closeOv();render();if(G.pending&&G.pending.p===0)showTickets();else schedule()}
+
+// ---------- Online (PeerJS: browsers connect directly, the public PeerJS server only introduces them) ----------
+// The host's browser runs the game and the bots. Guests send their moves to the host and get the whole state back after every change.
+// ponytail: host tab must stay open (closing it ends the game); move the game into a Cloudflare Durable Object if that ever hurts.
+const ROOM=(new URLSearchParams(location.search).get("room")||"").toUpperCase().slice(0,4);
+const ACTIONS={takeFace,takeDeck,claim,drawTickets,pass,keepTickets};
+let ticketsOpen=false;
+function act(a,...args){if(NET&&!NET.host)return NET.conn.send({a,args});ACTIONS[a](...args)}
+const loadPeer=()=>window.Peer?Promise.resolve():new Promise((ok,err)=>{const s=document.createElement("script");
+  s.src="https://cdnjs.cloudflare.com/ajax/libs/peerjs/1.5.4/peerjs.min.js";s.onload=ok;s.onerror=()=>err(toast("Can't load the online library. Are you offline?"));document.head.appendChild(s)});
+function leaveNet(){if(NET){const n=NET;NET=null;ME=0;n.peer.destroy()}}
+const lobbyNames=()=>[NET.name,...[...NET.conns.keys()].map(c=>c.nm)];
+const lobbyHTML=names=>names.map((n,i)=>`<div class="player" style="--pc:${PCOL[i]}"><span class="dot"></span><div class="pname">${n}${i?"":" <span class='sub'>host</span>"}</div></div>`).join("");
+function lobbyUpdate(){const names=lobbyNames();if($("lobbyList"))$("lobbyList").innerHTML=lobbyHTML(names);for(const c of NET.conns.keys())c.send({lobby:names})}
+function broadcast(){if(NET?.host&&NET.started)for(const[c,seat]of NET.conns)if(seat!==null&&c.open)c.send({G,me:seat})}
+
+async function hostRoom(name,map){await loadPeer();leaveNet();
+  const code=Array.from({length:4},()=>"ABCDEFGHJKLMNPQRSTUVWXYZ"[Math.random()*24|0]).join(""),peer=new Peer("jade-rails-"+code);
+  NET={host:true,peer,code,name,conns:new Map(),started:false};
+  peer.on("error",e=>toast(e.type==="unavailable-id"?"Room code taken, try again.":"Online error: "+e.type));
+  peer.on("open",()=>{const link=location.href.split(/[?#]/)[0]+"?room="+code;
+    ov(`<h2>Room ${code}</h2><p class="muted">Friends open the game and join with this code, or open the link. Keep this tab open: your browser runs the game.</p>
+      <div class="row"><input readonly value="${link}" style="flex:1;min-width:0"><button class="ghost" id="copyBtn">Copy link</button></div>
+      <h3>Players</h3><div id="lobbyList" style="margin-bottom:12px"></div>
+      <div class="row"><label for="mp">Map</label><select id="mp">${Object.values(MAPS).map(m=>`<option value="${m.id}" ${m.id===map?"selected":""}>${m.name}</option>`).join("")}</select></div>
+      <h3>Add bots</h3>${botRows(false)}<button class="primary wide" id="goBtn">Start game</button>`);
+    lobbyUpdate();$("copyBtn").onclick=()=>navigator.clipboard.writeText(link).then(()=>toast("Link copied"));
+    $("goBtn").onclick=()=>{const guests=[...NET.conns.keys()],bots=pickBots();
+      if(!guests.length&&!bots.length)return toast("Wait for a friend to join, or add a bot.");if(guests.length+bots.length>3)return toast("4 players max.");
+      guests.forEach((c,i)=>NET.conns.set(c,i+1));NET.started=true;closeOv();ME=0;
+      newGame([{name,bot:false},...guests.map(c=>({name:c.nm,bot:false})),...bots],$("mp").value)}});
+  peer.on("connection",conn=>conn.on("open",()=>{if(NET?.peer!==peer)return conn.close();const nm=clean(conn.metadata?.name),refuse=m=>{conn.send({err:m});setTimeout(()=>conn.close(),500)};
+    if(NET.started){ // same name can take back a seat that lost its connection
+      const taken=new Set(NET.conns.values()),seat=G.players.findIndex((p,i)=>i&&!p.bot&&p.name===nm&&!taken.has(i));
+      if(seat<0)return refuse("That game has already started.");conn.nm=nm;NET.conns.set(conn,seat);toast(`${nm} rejoined`);conn.send({G,me:seat})}
+    else{if(NET.conns.size>=3)return refuse("The room is full.");let n=nm,k=2;while(lobbyNames().includes(n))n=nm.slice(0,10)+k++;
+      conn.nm=n;NET.conns.set(conn,null);lobbyUpdate()}
+    conn.on("data",m=>{const seat=NET?.conns.get(conn);if(seat)onAction(seat,m)});
+    conn.on("close",()=>{if(NET?.peer!==peer)return;NET.conns.delete(conn);toast(`${conn.nm} left`);if(!NET.started)lobbyUpdate()})}))}
+// Host side: a guest may only act on its own turn (or its own ticket choice), with arguments the rules accept.
+function onAction(seat,m){if(!G||G.over||!m||!Object.hasOwn(ACTIONS,m.a)||!Array.isArray(m.args))return;const pd=G.pending;
+  if(pd?pd.p!==seat||m.a!=="keepTickets":G.cur!==seat||m.a==="keepTickets")return;
+  if(pd){const k=m.args[0];if(!Array.isArray(k)||new Set(k).size!==k.length||k.length<pd.min||!k.every(t=>pd.offered.includes(t)))return}
+  ACTIONS[m.a](...m.args)}
+
+async function joinRoom(code,name){await loadPeer();leaveNet();const peer=new Peer();NET={host:false,peer,code};
+  peer.on("error",e=>{toast(e.type==="peer-unavailable"?`Room ${code} not found.`:"Online error: "+e.type)});
+  peer.on("open",()=>{const conn=peer.connect("jade-rails-"+code,{metadata:{name},serialization:"json",reliable:true});NET.conn=conn;
+    conn.on("open",()=>ov(`<h2>Room ${code}</h2><p class="muted">Joined. Waiting for the host to start the game…</p><div id="lobbyList"></div>`));
+    conn.on("data",m=>{if(m.err){toast(m.err);leaveNet()}else if(m.lobby){if($("lobbyList"))$("lobbyList").innerHTML=lobbyHTML(m.lobby)}else if(m.G)receive(m.G,m.me)});
+    conn.on("close",()=>{if(NET?.conn===conn){toast("Disconnected from the host.");leaveNet()}})})}
+// Guest side: swap in the host's state and replay the sounds and effects the host saw.
+function receive(g,me){const prev=NET.live?G:null,myDone=()=>human().tickets.filter(t=>connected(human(),TICKETS[t].a,TICKETS[t].b));
+  const before=prev?myDone():[];ME=me;useMap(g.map);G=g;NET.live=true;if(!prev){clearTimeout(timer);ticketsOpen=false;closeOv()}
+  const lc=G.lastClaim;if(lc&&lc.at!==NET.lastAt){NET.lastAt=lc.at;if(prev){lc.at=Date.now();const r=ROUTES[lc.rid];fxClaim(r,G.owner[r.id]);sfx("claim",r.len)}}
+  render();if(!prev)return G.pending?.p===ME&&showTickets();
+  myDone().filter(t=>!before.includes(t)).forEach((t,i)=>setTimeout(()=>{sfx("done");fxTicket(t)},1200+i*1400));
+  if(G.cur===ME&&prev.cur!==ME&&!G.over)sfx("turn",0,.6);
+  if(G.pending?.p===ME&&!ticketsOpen)showTickets();
+  if(G.over&&!prev.over){sfx(G.results[0].p.i===ME?"win":"lose",0,.4);showEnd()}}
 
 // ---------- UI ----------
 const overlay=$("overlay");
@@ -538,7 +639,7 @@ function render(){if(SIM||!G)return;const me=human(),myTurn=cur()===me&&!G.over&
   const goals=new Set();me.tickets.forEach(t=>{const T=TICKETS[t];if(!connected(me,T.a,T.b)){goals.add(T.a);goals.add(T.b)}});
   document.querySelectorAll(".city").forEach(g=>g.classList.toggle("goal",goals.has(g.dataset.city)));
   $("players").innerHTML=G.players.map(p=>`<div class="player ${p===cur()&&!G.over?"active":""}" style="--pc:${p.color}"><span class="dot"></span>
-    <div class="pname">${p.name}<div class="sub">${p.bot?LEVELS[p.level]+" bot":"You"}</div></div>
+    <div class="pname">${p.name}<div class="sub">${p.bot?LEVELS[p.level]+" bot":p===me?"You":"Online"}</div></div>
     <div class="stats">${p.trains} trains · ${cardCount(p)} cards<br>${p.tickets.length} tickets · longest ${longest(p)}</div><div class="score">${p.score}</div></div>`).join("");
   $("market").innerHTML=G.faceUp.map((c,i)=>c?`<div class="tcard c-${c} ${!myTurn||(c==="wild"&&G.drawn)?"disabled":""}" data-i="${i}" title="${c}">${card(c,c==="wild"?`<span class="lbl">WILD</span>`:"")}</div>`:`<div class="tcard empty"></div>`).join("")+
     `<div class="tcard deck ${!myTurn||!(G.deck.length||G.discard.length)?"disabled":""}" data-i="deck" title="Draw from deck"><small>DECK</small>${G.deck.length+G.discard.length}</div>`;
@@ -546,40 +647,51 @@ function render(){if(SIM||!G)return;const me=human(),myTurn=cur()===me&&!G.over&
   $("hand").innerHTML=[...COLORS,"wild"].map(c=>`<div class="tcard c-${c} ${me.hand[c]?"":"zero"}" title="${c}">${card(c,`<span class="n">${me.hand[c]}</span>`)}</div>`).join("");
   $("tickets").innerHTML=me.tickets.map(t=>{const T=TICKETS[t];return ticketHTML(t,connected(me,T.a,T.b)?"done":"")}).join("")||`<span class="sub">None yet</span>`;
   const stuck=myTurn&&!G.drawn&&!canDrawAny()&&!G.tdeck.length&&!ROUTES.some(r=>routeOk(r,me)&&payOptions(r,me).length);
-  $("status").innerHTML=(G.over?"Game over":G.pending?(G.pending.p===0?"Choose your destination tickets":`${cur().name} is choosing tickets…`):
+  $("status").innerHTML=(G.over?"Game over":G.pending?(G.pending.p===ME?"Choose your destination tickets":`${G.players[G.pending.p].name} is choosing tickets…`):
     myTurn?(G.drawn?"Draw one more card (not a face-up wild)":"Your turn: draw 2 cards, claim a route, or draw tickets"):`${cur().name} is playing…`)+
     (stuck?` <button class="ghost" id="passBtn">Pass</button>`:"")+(G.finalLeft>0&&!G.over?`<span class="final">Final round</span>`:"");
-  if(stuck)$("passBtn").onclick=pass;
-  $("log").innerHTML=G.log.map(m=>`<div>${m}</div>`).join("");save()}
+  if(stuck)$("passBtn").onclick=()=>act("pass");
+  $("log").innerHTML=G.log.map(m=>`<div>${m}</div>`).join("");save();broadcast()}
 
-function showTickets(){const pd=G.pending,sel=new Set(pd.offered);
+function showTickets(){const pd=G.pending,sel=new Set(pd.offered);ticketsOpen=true;
   const draw=()=>{ov(`<h2>${pd.initial?"Choose your destinations":"New destination tickets"}</h2>
     <p class="muted">Keep at least ${pd.min}.${pd.initial?' One is a <b>long route</b>: if you skip it, it leaves the game.':''} Connect both cities with your own routes by game end to score the points, or lose them.</p>
     ${pd.offered.map(t=>ticketHTML(t,"big"+(sel.has(t)?" sel":""))).join("")}
     <button class="primary wide" id="keepBtn" ${sel.size<pd.min?"disabled":""}>Keep ${sel.size}</button>`);
     overlay.querySelectorAll("[data-t]").forEach(el=>{const t=+el.dataset.t;el.onclick=()=>{sel.has(t)?sel.delete(t):sel.add(t);draw();hl(t)};
       el.onmouseenter=()=>hl(t);el.onmouseleave=()=>hl(null)});
-    $("keepBtn").onclick=()=>{closeOv();hl(null);const init=pd.initial;keepTickets(pd.offered.filter(t=>sel.has(t)));if(init){log("You go first.");render();schedule()}}};
+    $("keepBtn").onclick=()=>{closeOv();hl(null);ticketsOpen=false;act("keepTickets",pd.offered.filter(t=>sel.has(t)))}};
   draw()}
 function showEnd(){const R=G.results;
-  ov(`<h2>${R[0].p===human()?"You win!":R[0].p.name+" wins"}</h2>
+  ov(`<h2>${R[0].p.i===ME?"You win!":R[0].p.name+" wins"}</h2>
     <table><tr><th>Player</th><th>Routes</th><th>Tickets</th><th>Longest</th><th>Total</th></tr>
     ${R.map(r=>`<tr><td><span class="dot" style="--pc:${r.p.color};display:inline-block;margin-right:6px"></span>${r.p.name}</td><td>${r.routes}</td>
       <td>+${r.plus} / −${r.minus}</td><td>${r.long}${r.bonus?" (+10)":""}</td><td><b>${r.total}</b></td></tr>`).join("")}</table>
     <div class="row"><button class="ghost wide" id="viewBtn">View board</button><button class="primary wide" id="againBtn">New game</button></div>`);
   $("viewBtn").onclick=closeOv;$("againBtn").onclick=showSetup}
 function showSetup(){const sv=loadSave();
-  ov(`<h2>Jade Rails</h2><p class="muted">Build rail lines across East Asia or Germany. Collect cards, claim routes, and connect your destination cities before the trains run out.</p>
+  ov(`<h2>Jade Rails</h2><p class="muted">Build rail lines across East Asia, Germany or France. Collect cards, claim routes, and connect your destination cities before the trains run out.</p>
     ${sv?`<button class="primary wide" id="resumeBtn" style="margin-bottom:6px">Resume saved game</button>
     <p class="sub" style="text-align:center;margin:0 0 14px">${sv.players.map(p=>`${p.name} ${p.score}`).join(" · ")} · ${sv.players[0].trains} trains left</p>
     <h3>Or start a new game</h3>`:""}
     <div class="row"><label for="mp">Map</label><select id="mp">${Object.values(MAPS).map(m=>`<option value="${m.id}" ${m===MAP?"selected":""}>${m.name}</option>`).join("")}</select></div>
     <div class="row"><label for="nm">Your name</label><input id="nm" value="You" maxlength="12"></div>
-    ${BOT_NAMES.map((n,i)=>`<div class="row"><label for="b${i}">${n}</label><select id="b${i}"><option value="-1">Not playing</option>${LEVELS.map((l,j)=>`<option value="${j}" ${j===(i===2?2:1)&&(i<2)||j===1&&i===2?"selected":""}>${l}</option>`).join("")}</select></div>`).join("")}
-    <button class="primary wide" id="startBtn">Start game</button>`);
-  if(sv)$("resumeBtn").onclick=()=>resume(sv);
-  $("startBtn").onclick=()=>{const bots=BOT_NAMES.map((n,i)=>({name:n,bot:true,level:+$("b"+i).value})).filter(b=>b.level>=0);
-    if(!bots.length)return toast("Pick at least one opponent.");closeOv();newGame([{name:$("nm").value.trim()||"You",bot:false},...bots],$("mp").value)}}
+    ${botRows(true)}
+    <button class="primary wide" id="startBtn">Start game</button>
+    <h3 style="margin-top:16px">Play online with friends</h3>
+    <div class="row"><button class="ghost wide" id="hostBtn">Host a room</button></div>
+    <div class="row"><input id="code" placeholder="Room code" maxlength="4" value="${ROOM}" style="flex:1;text-transform:uppercase"><button class="ghost" id="joinBtn">Join</button></div>`);
+  if(sv)$("resumeBtn").onclick=()=>{leaveNet();resume(sv)};
+  const myName=()=>{const n=clean($("nm").value);try{localStorage.setItem("jr-name",n)}catch{}return n};
+  $("nm").value=(()=>{try{return localStorage.getItem("jr-name")}catch{}})()||"You";
+  $("startBtn").onclick=()=>{const bots=pickBots();
+    if(!bots.length)return toast("Pick at least one opponent.");leaveNet();closeOv();newGame([{name:myName(),bot:false},...bots],$("mp").value)};
+  const online=f=>()=>{const n=myName();if(n==="You")return toast("Type your name first.");f(n)};
+  $("hostBtn").onclick=online(n=>hostRoom(n,$("mp").value));
+  $("joinBtn").onclick=online(n=>{const c=$("code").value.trim().toUpperCase();c.length===4?joinRoom(c,n):toast("Enter the 4-letter room code.")})}
+const botRows=on=>BOT_NAMES.map((n,i)=>`<div class="row"><label for="b${i}">${n}</label><select id="b${i}"><option value="-1">Not playing</option>${LEVELS.map((l,j)=>`<option value="${j}" ${on&&j===1?"selected":""}>${l}</option>`).join("")}</select></div>`).join("");
+const pickBots=()=>BOT_NAMES.map((n,i)=>({name:n,bot:true,level:+$("b"+i).value})).filter(b=>b.level>=0);
+const clean=s=>String(s||"").replace(/[<>&"']/g,"").trim().slice(0,12)||"You"; // names from other players end up in innerHTML
 
 $("map").addEventListener("click",e=>{if(panMoved)return;const g=e.target.closest("[data-rid]");if(!g||!G)return;const r=ROUTES[+g.dataset.rid],me=human();
   if(G.over||cur()!==me||G.pending)return nope("Wait for your turn.");
@@ -587,14 +699,14 @@ $("map").addEventListener("click",e=>{if(panMoved)return;const g=e.target.closes
   if(!free(r,me))return nope("That route isn't available.");
   if(me.trains<r.len)return nope("Not enough trains left.");
   const o=payOptions(r,me);if(!o.length)return nope(`Need ${r.len} ${r.color==="gray"?"cards of one color":r.color+" cards"} (wilds count).`);
-  if(o.length===1)return claim(r.id,o[0]);
+  if(o.length===1)return act("claim",r.id,o[0]);
   ov(`<h2>Pay for ${r.a} – ${r.b}</h2><p class="muted">${r.len} cards, worth ${PTS[r.len]} points.</p><div class="payopts">${o.map(c=>{const n=c==="wild"?0:Math.min(me.hand[c],r.len),w=r.len-n;
     return`<button data-c="${c}"><span class="chip c-${c}"></span>${[n?n+" "+c:"",w?w+" wild":""].filter(Boolean).join(" + ")}</button>`}).join("")}</div>
     <button class="ghost wide" id="cancelPay">Cancel</button>`);
-  overlay.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{closeOv();claim(r.id,b.dataset.c)});$("cancelPay").onclick=closeOv});
+  overlay.querySelectorAll("[data-c]").forEach(b=>b.onclick=()=>{closeOv();act("claim",r.id,b.dataset.c)});$("cancelPay").onclick=closeOv});
 $("market").addEventListener("click",e=>{const el=e.target.closest("[data-i]");if(!el||el.classList.contains("disabled"))return;
-  el.dataset.i==="deck"?takeDeck():takeFace(+el.dataset.i)});
-$("ticketBtn").onclick=drawTickets;
+  el.dataset.i==="deck"?act("takeDeck"):act("takeFace",+el.dataset.i)});
+$("ticketBtn").onclick=()=>act("drawTickets");
 $("newBtn").onclick=showSetup;
 const muteLabel=()=>$("muteBtn").textContent=muted?"🔇":"🔊";muteLabel();
 $("muteBtn").onclick=()=>{muted=!muted;try{localStorage.setItem("jr-muted",muted?"1":"0")}catch{}muteLabel();sfx("card")};
