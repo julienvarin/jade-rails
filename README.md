@@ -19,4 +19,4 @@ One player clicks **Host a room** and shares the 4-letter code (or the link). Fr
 
 Bot self-check: open the browser console and run `simulate()`.
 
-Map geography (coastlines, borders, rivers, lakes, mountain ranges, deserts) comes from [Natural Earth](https://www.naturalearthdata.com), public domain.
+Map geography (coastlines, borders, rivers, lakes) comes from [Natural Earth](https://www.naturalearthdata.com), public domain. Shaded relief is baked from [AWS Terrain Tiles](https://registry.opendata.aws/terrain-tiles/) elevation data (SRTM, ETOPO1 and others).
