@@ -18,3 +18,5 @@ One player clicks **Host a room** and shares the 4-letter code (or the link). Fr
 - To share a link, the file must be served from a web address (e.g. GitHub Pages), not opened from disk.
 
 Bot self-check: open the browser console and run `simulate()`.
+
+Map geography (coastlines, borders, rivers, lakes, mountain ranges, deserts) comes from [Natural Earth](https://www.naturalearthdata.com), public domain.
