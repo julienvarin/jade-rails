@@ -413,7 +413,7 @@ function keepTickets(keep){const pd=G.pending,p=G.players[pd.p];G.pending=null;p
 
 function endTurn(){const p=cur();G.drawn=0;
   if(G.finalLeft>0){if(--G.finalLeft===0)return finish()}
-  else if(G.finalLeft<0&&p.trains<=2){G.finalLeft=G.players.length;log(`${p.name} is down to ${p.trains} trains: everyone gets one final turn!`);sfx("final")}
+  else if(G.finalLeft<0&&p.trains<=2){G.finalLeft=G.players.length-1;log(`${p.name} is down to ${p.trains} trains: everyone else gets one final turn!`);sfx("final")}
   if(G.passes>=G.players.length*2)return finish(); // nobody can move
   G.cur=(G.cur+1)%G.players.length;if(cur()===human())sfx("turn",0,.6);render();schedule()}
 function pass(){G.passes++;log(`${cur().name} passed.`);endTurn()}
