@@ -1,6 +1,6 @@
 # Jade Rails
 
-A train route-building board game across East Asia, Germany or France, for 1 player against 1–3 bots (Easy, Medium, Hard).
+A train route-building board game across East Asia, Germany, France or Africa, for 1 player against 1–3 bots (Easy, Medium, Hard).
 
 Open `jade-rails.html` in any browser. No install, no server, works offline.
 
